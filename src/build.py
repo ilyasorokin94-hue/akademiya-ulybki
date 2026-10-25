@@ -27,12 +27,25 @@ def block(start, end_tag, new, src=None):
     s = s[:i] + new + s[j:]
 
 
+# Кадры, которые нужно согласовать с клиникой: на сайте у них плашка «уточнить»
+ASK = {
+    'images/doctors/lazarev.webp': 'Фото из прошлой клиники, уточнить',
+    'images/doctors/gerasimova.webp': 'Уточнить, кто на фото',
+    'images/real/old-mikroskop.webp': 'Прошлая клиника, уточнить',
+    'images/real/old-modeli.webp': 'Прошлая клиника, уточнить',
+    'images/real/old-implant.webp': 'Прошлая клиника, уточнить',
+}
+
+
 def img(path, alt='', cls='', style='', extra=''):
     a = f'<img src="{path}" alt="{html.escape(alt)}" loading="lazy" decoding="async" onerror="umImg(this)"'
     if cls: a += f' class="{cls}"'
     if style: a += f' style="{style}"'
     if extra: a += ' ' + extra
-    return a + '>'
+    a += '>'
+    if path in ASK:
+        a += f'<span class="au-ask" title="{ASK[path]}">уточнить</span>'
+    return a
 
 
 # ---------- HEAD ----------
@@ -48,7 +61,7 @@ head = head.replace('<meta name="theme-color" content="#ffffff">',
                     f'<meta property="og:type" content="website">\n<meta property="og:title" content="{TITLE}">\n<meta property="og:description" content="{DESC}">\n<meta property="og:locale" content="ru_RU">\n<meta name="theme-color" content="#15171c">')
 head = re.sub(r'<link rel="apple-touch-icon"[^>]*>\n', '', head)
 head = head.replace('<link rel="stylesheet" href="assets/styles.css?v=d847b31c">',
-                    '<link rel="stylesheet" href="assets/styles.css?v=au1">\n<link rel="stylesheet" href="assets/akademiya.css?v=au1">')
+                    '<link rel="stylesheet" href="assets/styles.css?v=au1">\n<link rel="stylesheet" href="assets/akademiya.css?v=au2">')
 # свой прелоадер вместо интро Вайтис: js-intro не ставим, держим страницу под заставкой
 head = head.replace('if(d.dataset.page==="home"&&!sessionStorage.getItem("um2-intro"))d.classList.add("js-intro")',
                     'd.classList.add("au-loading")')
@@ -146,34 +159,34 @@ SLOGAN = f'''<section class="slogan on-dark" aria-label="{SLOGAN_T}">
 block('<section class="slogan on-dark"', '</section>', SLOGAN)
 
 # ---------- КЛИНИКА (тур) ----------
-# Пока нет фото от Элины: временные кадры, подменятся реальными (фасад, ресепшен, кабинеты)
+# Реальные фото новой клиники из чатов с Элиной (Max, Telegram, видео фасада)
 CL = [
-    ('images/clinic/fasad.webp', 'Здание клиники на Попова, 4а', 'tall'),
-    ('images/tp/vrach-kabinet.webp', 'Лечебный кабинет', 'tall'),
-    ('images/gen/microscope.webp', 'Дентальный микроскоп', ''),
-    ('images/tp/hero.webp', 'Кабинет ортопеда', ''),
-    ('images/uslugi/detskaya.webp', 'Для маленьких пациентов', ''),
-    ('images/clinic/kt.webp', 'Рентген-диагностика', 'tall'),
+    ('images/real/fasad-vecher.webp', 'Здание клиники на Попова, 4а', 'tall'),
+    ('images/real/kabinet.webp', 'Лечебный кабинет', 'tall'),
+    ('images/real/holl-3.webp', 'Холл и ресепшен', ''),
+    ('images/real/logo-stena.webp', 'Добро пожаловать в «Академию»', ''),
+    ('images/real/kabinet-2.webp', 'Кабинет с видом на город', ''),
+    ('images/real/lestnica.webp', 'Лестница на второй этаж', 'tall'),
 ]
 CL2 = [
-    ('images/uslugi/lechenie-zubov.webp', 'Кабинет терапевта', ''),
-    ('images/akcii/mikroskop.webp', 'Работа под увеличением', 'tall'),
-    ('images/uslugi/diagnostika.webp', 'Цифровые снимки', 'tall'),
-    ('images/clinic/instrumenty.webp', 'Стерильные инструменты', ''),
-    ('images/tp/koronka.webp', 'Коронки и протезы', 'tall'),
+    ('images/real/holl.webp', 'Зона ожидания', ''),
+    ('images/real/fasad-noch.webp', 'Вечером здание подсвечено', 'tall'),
+    ('images/real/elina-kabinet.webp', 'Элина Вячеславовна в кабинете', 'tall'),
+    ('images/real/holl-2.webp', 'Холл с диванами', ''),
+    ('images/real/vitrina.webp', 'Витрины первого этажа', 'tall'),
 ]
 def tfig(p, alt, kind, hidden=False):
     return f'<figure class="tfig{" tfig--tall" if kind == "tall" else ""}"{" aria-hidden=\"true\"" if hidden else ""}><span class="tfig__img">{img(p, alt)}</span><figcaption>{alt}</figcaption></figure>'
 row1 = ''.join(tfig(*c) for c in CL) + ''.join(tfig(*c, hidden=True) for c in CL)
 row2 = ''.join(tfig(*c) for c in CL2) + ''.join(tfig(*c, hidden=True) for c in CL2)
-TOUR_P = 'Светлая клиника в Театральном районе Рязани. Своя парковка, вход без ступенек, детская зона. Каждый зуб лечим под микроскопом или бинокулярами.'
+TOUR_P = 'Отдельное здание в Театральном районе Рязани: светлые кабинеты, мраморный холл, своя парковка и вход без ступенек. Каждый зуб лечим под микроскопом или бинокулярами.'
 def pwin(p, alt, ar, p0, p1, pos, cls=''):
     return f'<div class="ptour__item{cls}"><div class="ptour__win" style="--ar:{ar};--p0:{p0};--p1:{p1}"><span class="ptour__rail">{img(p, alt, "ptour__img", "object-position:" + pos)}</span></div><p class="ptour__cap" aria-hidden="true">{alt}</p></div>'
 def pfig(p, alt, r, par=False):
     return f'<figure class="ptour__fig"{" data-par" if par else ""} style="--r:{r}"><span class="ptour__pic">{img(p, alt)}</span><figcaption>{alt}</figcaption></figure>'
 TOUR = f'''<section class="tour on-dark" id="clinic" aria-labelledby="tr-title">
   <div class="tour__pin">
-    <div class="tour__frame">{img("images/tp/vrach-kabinet.webp", "Кабинет «Академии улыбки»", style="object-position:50% 55%")}</div>
+    <div class="tour__frame">{img("images/real/holl.webp", "Холл «Академии улыбки»", style="object-position:50% 60%")}</div>
     <div class="tour__title wrap"><span class="label label--light">Клиника</span><h2 id="tr-title" data-split>Здесь учат улыбаться</h2><p>{TOUR_P}</p><a class="btn btn--light" href="{ROUTE}" target="_blank" rel="noopener">Построить маршрут</a></div>
   </div>
   <p class="tour__lead wrap">{TOUR_P}</p>
@@ -183,14 +196,14 @@ TOUR = f'''<section class="tour on-dark" id="clinic" aria-labelledby="tr-title">
   <div class="ptour">
     <div class="ptour__car"><div class="ptour__items">
       <div class="ptour__item ptour__item--empty"></div>
-      {pwin("images/clinic/fasad.webp", "Здание клиники", "3 / 4", .1, .6, "50% 50%")}{pwin("images/tp/hero.webp", "Лечебный кабинет", "1 / 1", .1, .6, "35% 50%")}{pwin("images/uslugi/detskaya.webp", "Детям", "3 / 2", .2, .7, "45% 50%", " ptour__item--left")}
-      <div class="ptour__item ptour__item--main">{img("images/tp/vrach-kabinet.webp", "Кабинет «Академии улыбки»", "ptour__img")}<span class="ptour__shade"></span>
+      {pwin("images/real/fasad-vecher-2.webp", "Здание клиники", "3 / 4", .1, .6, "50% 40%")}{pwin("images/real/kabinet-3.webp", "Лечебный кабинет", "1 / 1", .1, .6, "50% 50%")}{pwin("images/real/holl-2.webp", "Холл", "3 / 2", .2, .7, "45% 60%", " ptour__item--left")}
+      <div class="ptour__item ptour__item--main">{img("images/real/holl.webp", "Холл «Академии улыбки»", "ptour__img")}<span class="ptour__shade"></span>
         <div class="ptour__slogan"><span class="label label--light"><span class="w" style="--i:0">Клиника</span></span><h2 class="ptour__title"><span class="w" style="--i:1">Здесь</span> <span class="w" style="--i:2">учат</span> <span class="w" style="--i:3">улыбаться</span></h2></div></div>
-      <div class="ptour__item ptour__item--right">{img("images/gen/microscope.webp", "Дентальный микроскоп", "ptour__img")}<p class="ptour__cap" aria-hidden="true">Микроскоп</p></div>
+      <div class="ptour__item ptour__item--right">{img("images/real/elina-kabinet.webp", "Элина Вячеславовна в кабинете", "ptour__img", "object-position:50% 40%")}<p class="ptour__cap" aria-hidden="true">Кабинет терапевта</p></div>
     </div></div>
     <div class="ptour__spacer"></div>
     <div class="ptour__after">
-      <div class="ptour__grid">{pfig("images/clinic/kt.webp", "Рентген-диагностика", "410 / 628")}{pfig("images/uslugi/detskaya.webp", "Для маленьких пациентов", "1 / 1", True)}{pfig("images/akcii/mikroskop.webp", "Работа под увеличением", "410 / 628")}{pfig("images/clinic/instrumenty.webp", "Стерильные инструменты", "520 / 416", True)}{pfig("images/uslugi/lechenie-zubov.webp", "Кабинет терапевта", "520 / 362")}{pfig("images/tp/koronka.webp", "Коронки и протезы", "410 / 628", True)}</div>
+      <div class="ptour__grid">{pfig("images/real/fasad-noch-2.webp", "Вечером здание подсвечено", "410 / 628")}{pfig("images/real/kabinet-4.webp", "Лечебный кабинет", "1 / 1", True)}{pfig("images/real/logo-stena-3.webp", "Логотип у лестницы", "410 / 628")}{pfig("images/real/holl-3.webp", "Холл и ресепшен", "520 / 416", True)}{pfig("images/real/kabinet-2.webp", "Кабинет с видом на город", "520 / 362")}{pfig("images/real/old-mikroskop.webp", "Лечение под бинокулярами", "410 / 628", True)}</div>
       <div class="ptour__text"><p>{TOUR_P}</p><a class="btn btn--light" href="{ROUTE}" target="_blank" rel="noopener">Построить маршрут</a></div>
     </div>
   </div>
@@ -243,8 +256,8 @@ block('<section class="section section--sage svs"', '</section>', SERV)
 
 # ---------- АКЦИИ ----------
 PR = [
-    ('akcii/mikroskop', 'Врач работает с дентальным микроскопом', 'Бесплатно', 'Консультация и снимок', '0 ₽', 'Осмотр любого врача, план лечения с ценой и прицельный снимок зуба', 'Записаться бесплатно', 'бесплатная консультация и снимок'),
-    ('akcii/implantaciya', 'Имплант с коронкой на мраморе', 'Имплантация', 'Имплант под ключ', '63 900 ₽', 'Имплант и коронка по одной цене. Ведёт ортопед-хирург со стажем 35 лет', 'Записаться на консультацию', 'имплант под ключ 63 900 ₽'),
+    ('real/old-mikroskop', 'Виктор Викторович лечит под бинокулярами', 'Бесплатно', 'Консультация и снимок', '0 ₽', 'Осмотр любого врача, план лечения с ценой и прицельный снимок зуба', 'Записаться бесплатно', 'бесплатная консультация и снимок'),
+    ('real/old-implant', 'Имплантационный набор', 'Имплантация', 'Имплант под ключ', '63 900 ₽', 'Имплант и коронка по одной цене. Ведёт ортопед-хирург со стажем 35 лет', 'Записаться на консультацию', 'имплант под ключ 63 900 ₽'),
     ('tp/kost', 'Модель челюсти с имплантами', 'Все зубы за раз', 'All-on-4', 'от 300 000 ₽', 'Несъёмный протез на 4 имплантах. Из диоксида циркония 450 000 ₽', 'Узнать подробнее', 'All-on-4 от 300 000 ₽'),
     ('akcii/kids-gift', 'Мальчик с подарком в кабинете', 'Детям', 'Без слёз и страха', '4 500 ₽', 'Лечение молочного зуба. Врач договаривается с ребёнком, а не торопит', 'Записать ребёнка', 'детский приём'),
 ]

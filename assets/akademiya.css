@@ -59,3 +59,8 @@ html:not(.js-anim) .pl{display:none}
 .au-price{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:clamp(40px,5vw,88px)}
 .au-price li:nth-child(-n+2){border-top:0}
 @media (max-width:760px){.au-price{grid-template-columns:1fr}.au-price li{gap:8px}.au-price .alv__t{font-size:15px}}
+
+/* плашка «уточнить»: кадр нужно согласовать с клиникой до запуска */
+.tfig__img,.ptour__pic,.ptour__rail,.ptour__item--right,.hero__face,.invite__pic{position:relative}
+.au-ask{position:absolute;z-index:3;top:10px;left:10px;padding:5px 9px 4px;border-radius:999px;background:#d9bf8c;color:#15171c;font:600 11px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;box-shadow:0 2px 10px rgba(0,0,0,.25);pointer-events:none}
+.hero__face .au-ask,.invite__pic .au-ask{top:4px;left:50%;transform:translateX(-50%);padding:3px 6px 2px;font-size:8px;letter-spacing:.04em}

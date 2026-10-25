@@ -66,7 +66,7 @@ head = head.replace('<meta name="theme-color" content="#ffffff">',
                     f'<meta property="og:type" content="website">\n<meta property="og:title" content="{TITLE}">\n<meta property="og:description" content="{DESC}">\n<meta property="og:locale" content="ru_RU">\n<meta name="theme-color" content="#15171c">')
 head = re.sub(r'<link rel="apple-touch-icon"[^>]*>\n', '', head)
 head = head.replace('<link rel="stylesheet" href="assets/styles.css?v=d847b31c">',
-                    '<link rel="stylesheet" href="assets/styles.css?v=au2">\n<link rel="stylesheet" href="assets/akademiya.css?v=au5">')
+                    '<link rel="stylesheet" href="assets/styles.css?v=au2">\n<link rel="stylesheet" href="assets/akademiya.css?v=au6">')
 # свой прелоадер вместо интро Вайтис: js-intro не ставим, держим страницу под заставкой
 head = head.replace('if(d.dataset.page==="home"&&!sessionStorage.getItem("um2-intro"))d.classList.add("js-intro")',
                     'd.classList.add("au-loading")')
@@ -158,7 +158,7 @@ DOCS = [
          tags='gigiena estetika', chief=False),
 ]
 def doc_photo(d):
-    return f'images/doctors/{d["slug"]}.webp'
+    return f'images/doctors/{d["slug"]}.webp?v=2'
 
 
 trio = ''.join(f'<li><a href="#team" aria-label="{d["short"]}: {d["name"]} {d["fam"]}"><span class="hero__face" data-ph><span class="doc__initials" aria-hidden="true">{d["ini"]}</span>{img(doc_photo(d), d["name"] + " " + d["fam"])}</span><b>{d["short"]}</b><span>{d["name"]}<br>{d["fam"]}</span></a></li>' for d in DOCS)

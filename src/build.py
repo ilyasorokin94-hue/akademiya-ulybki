@@ -216,12 +216,13 @@ def tfig(p, alt, kind, hidden=False):
 row1 = ''.join(tfig(*c) for c in CL) + ''.join(tfig(*c, hidden=True) for c in CL)
 row2 = ''.join(tfig(*c) for c in CL2) + ''.join(tfig(*c, hidden=True) for c in CL2)
 TOUR_P = 'Отдельное здание в Театральном районе Рязани: светлые кабинеты, мраморный холл, своя парковка и вход без ступенек. Каждый зуб лечим под микроскопом или бинокулярами.'
+def full(p):
+    d = _dims(p)
+    return f'srcset="{p} {d[0]}w" sizes="100vw"' if d else ''
 def pwin(p, alt, ar, p0, p1, pos, cls=''):
-    return f'<div class="ptour__item{cls}"><div class="ptour__win" style="--ar:{ar};--p0:{p0};--p1:{p1}"><span class="ptour__rail">{img(p, alt, "ptour__img", "object-position:" + pos)}</span></div><p class="ptour__cap" aria-hidden="true">{alt}</p></div>'
+    return f'<div class="ptour__item{cls}"><div class="ptour__win" style="--ar:{ar};--p0:{p0};--p1:{p1}"><span class="ptour__rail">{img(p, alt, "ptour__img", "object-position:" + pos, full(p))}</span></div></div>'
 def pfig(p, alt, r, par=False):
-    return f'<figure class="ptour__fig"{" data-par" if par else ""} style="--r:{r}"><span class="ptour__pic">{img(p, alt)}</span><figcaption>{alt}</figcaption></figure>'
-def mfig(p, alt, cls=''):
-    return f'<figure class="mtour__fig{cls}" data-reveal>{img(p, alt)}</figure>'
+    return f'<figure class="ptour__fig"{" data-par" if par else ""} style="--r:{r}"><span class="ptour__pic">{img(p, alt, extra=full(p))}</span></figure>'
 TOUR = f'''<section class="tour on-dark" id="clinic" aria-labelledby="tr-title">
   <div class="tour__pin">
     <div class="tour__frame">{img("images/real/kabinet-2.webp", "Лечебный кабинет «Академии улыбки»", style="object-position:50% 50%")}</div>
@@ -231,11 +232,19 @@ TOUR = f'''<section class="tour on-dark" id="clinic" aria-labelledby="tr-title">
   <div class="tour__rows" aria-label="Фото клиники">
     <div class="tour__row" data-dir="-1">{row1}</div><div class="tour__row" data-dir="1">{row2}</div>
   </div>
-  <div class="mtour">
-    <div class="mtour__hero">{img("images/m/kabinet.webp", "Лечебный кабинет «Академии улыбки»", "mtour__bg")}<span class="mtour__shade"></span>
-      <div class="mtour__head"><span class="label label--light">Клиника</span><h2 class="mtour__title">Здесь учат улыбаться</h2></div></div>
-    <div class="mtour__grid">{mfig("images/m/fasad.webp", "Здание клиники на Попова, 4а")}{mfig("images/m/logo.webp", "Логотип «Академии улыбки» у лестницы")}{mfig("images/m/holl-wide.webp", "Холл и зона ожидания", " mtour__fig--wide")}{mfig("images/m/holl.webp", "Холл и ресепшен")}{mfig("images/m/lestnica.webp", "Лестница на второй этаж")}</div>
-    <div class="mtour__text"><p>{TOUR_P}</p><a class="btn btn--light" href="{ROUTE}" target="_blank" rel="noopener">Построить маршрут</a></div>
+  <div class="ptour">
+    <div class="ptour__car"><div class="ptour__items">
+      <div class="ptour__item ptour__item--empty"></div>
+      {pwin("images/real/fasad-vecher-2.webp", "Здание клиники на Попова, 4а", "3 / 4", .1, .6, "50% 40%")}{pwin("images/m/logo.webp", "Логотип «Академии улыбки» у лестницы", "1 / 1", .1, .6, "50% 38%")}{pwin("images/real/holl.webp", "Холл и зона ожидания", "3 / 2", .2, .7, "50% 60%", " ptour__item--left")}
+      <div class="ptour__item ptour__item--main">{img("images/m/kabinet.webp", "Лечебный кабинет «Академии улыбки»", "ptour__img", "object-position:50% 50%", full("images/m/kabinet.webp"))}<span class="ptour__shade"></span>
+        <div class="ptour__slogan"><span class="label label--light"><span class="w" style="--i:0">Клиника</span></span><h2 class="ptour__title"><span class="w" style="--i:1">Здесь</span> <span class="w" style="--i:2">учат</span> <span class="w" style="--i:3">улыбаться</span></h2></div></div>
+      <div class="ptour__item ptour__item--right">{img("images/real/elina-kabinet.webp", "Элина Вячеславовна в кабинете", "ptour__img", "object-position:50% 40%", full("images/real/elina-kabinet.webp"))}</div>
+    </div></div>
+    <div class="ptour__spacer"></div>
+    <div class="ptour__after">
+      <div class="ptour__grid">{pfig("images/real/fasad-noch-2.webp", "Вечером здание подсвечено", "410 / 628")}{pfig("images/real/holl-2.webp", "Холл с диванами", "1 / 1", True)}{pfig("images/real/lestnica.webp", "Лестница на второй этаж", "410 / 628")}{pfig("images/real/holl-3.webp", "Холл и ресепшен", "520 / 416", True)}{pfig("images/m/kabinet-wide.webp", "Кабинет с видом на город", "520 / 362")}{pfig("images/real/old-mikroskop.webp", "Лечение под бинокулярами", "410 / 628", True)}</div>
+      <div class="ptour__text"><p>{TOUR_P}</p><a class="btn btn--light" href="{ROUTE}" target="_blank" rel="noopener">Построить маршрут</a></div>
+    </div>
   </div>
 </section>'''
 block('<section class="tour on-dark"', '</section>', TOUR)
@@ -337,7 +346,7 @@ alp = ''.join(f'<li data-reveal><em class="pr-al__n">{c}</em><b>{a}</b><span>{b}
 AKCII = f'''<section class="section pr on-dark" id="akcii" aria-labelledby="pr-title"><div class="wrap">
   <div class="section__head"><div><span class="label label--light">Акции</span><h2 id="pr-title" data-split>Выгодные условия для пациентов</h2></div><p>Назовите акцию, когда администратор перезвонит.</p></div>
   <div class="pr4">{pr}</div>
-  <div class="alx"><div class="alx__desk"><div class="alv4"><h3 class="pr-al__title">Выгодно всегда</h3><ul class="alv4__list">{alv}</ul></div></div><div class="alx__phone"><div class="pr-al" id="alw" data-v="1"><h3 class="pr-al__title">Выгодно всегда</h3><ul class="pr-al__list">{alp}</ul></div></div></div>
+  <div class="alx"><div class="alx__desk"><div class="alv4"><h3 class="pr-al__title">Выгодно всегда</h3><ul class="alv4__list">{alv}</ul></div></div><div class="alx__phone"><div class="pr-al" id="alw" data-v="3"><h3 class="pr-al__title">Выгодно всегда</h3><ul class="pr-al__list">{alp}</ul></div></div></div>
 </div></section>'''
 block('<section class="section pr on-dark"', '</div></section>', AKCII)
 
@@ -570,7 +579,7 @@ VPANEL = """<div class="au-vp" role="group" aria-label="Варианты офо�
 <script>(function(){var K="au-v-";function set(t,v,go){var el=document.getElementById(t);if(!el)return;el.setAttribute("data-v",v);document.querySelectorAll('.au-vp__g[data-t="'+t+'"] button').forEach(function(b){b.classList.toggle("on",b.getAttribute("data-v")==v)});try{localStorage.setItem(K+t,v)}catch(e){}if(go)el.scrollIntoView({behavior:"smooth"});if(window.ScrollTrigger)ScrollTrigger.refresh()}
 document.querySelectorAll(".au-vp__g").forEach(function(g){var t=g.getAttribute("data-t"),v="1";try{v=localStorage.getItem(K+t)||"1"}catch(e){}set(t,v);g.addEventListener("click",function(e){var b=e.target.closest("button");if(b)set(t,b.getAttribute("data-v"),true)})})})();</script>
 """
-s = s.replace('</body>', VPANEL + '</body>', 1)  # демо-панель на телефоне: буква А и «Выгодно всегда»
+# s = s.replace('</body>', VPANEL + '</body>', 1)  # демо-панель отключена: выбраны «А» 1 и «Выгодно всегда» 1
 # свои стили встраиваем в страницу: на один блокирующий запрос меньше
 s = s.replace('<link rel="stylesheet" href="assets/akademiya.css?v=au9">', '<style>' + re.sub(r'/\*.*?\*/', '', open(os.path.join(ROOT, 'assets/akademiya.css'), encoding='utf-8').read().replace('\n', '')) + '</style>')
 s = re.sub(r'href="zapis(\?doctor=\w+)?"', 'href="#contacts"', s)

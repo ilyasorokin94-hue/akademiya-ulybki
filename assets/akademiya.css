@@ -75,7 +75,7 @@ html.au-loading .hero [data-split]{visibility:visible}
 @media (max-width:760px){.au-price{grid-template-columns:1fr}.au-price li{gap:8px}.au-price .alv__t{font-size:15px}}
 
 /* плашка «уточнить»: кадр нужно согласовать с клиникой до запуска */
-.tfig__img,.ptour__pic,.ptour__rail,.ptour__item--right,.hero__face,.invite__pic{position:relative}
+.tfig__img,.ptour__pic,.hero__face,.invite__pic{position:relative}
 .au-ask{position:absolute;z-index:3;top:10px;left:10px;padding:5px 9px 4px;border-radius:999px;background:#a9c1e3;color:#15171c;font:600 11px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;box-shadow:0 2px 10px rgba(0,0,0,.25);pointer-events:none}
 .hero__face .au-ask,.invite__pic .au-ask{top:4px;left:50%;transform:translateX(-50%);padding:3px 6px 2px;font-size:8px;letter-spacing:.04em}
 
@@ -230,22 +230,8 @@ body .pr4-card .pr-price b{font-size:clamp(30px,3.6vw,64px);line-height:1.05;whi
 @media (max-width:760px){.au-vp{bottom:auto;top:calc(var(--header-h,60px) + 10px);gap:5px;padding:7px 8px 7px 10px}.au-vp b{display:none}}
 
 /* ===== Мобильные правки 25.10 (только телефон) ===== */
-.mtour,.au-vp{display:none}
+.au-vp{display:none}
 @media (max-width:760px){
-  /* вторая секция: обычный поток, без горизонтальной ленты */
-  .tour .mtour{display:block;background:#fff;color:var(--steel)}
-  .mtour__hero{position:relative;height:calc(var(--svh, 1svh) * 86);min-height:520px;overflow:hidden;background:#dfe4ec}
-  .mtour__hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 45%}
-  .mtour__shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(21,23,28,0) 40%,rgba(21,23,28,.72) 100%)}
-  .mtour__head{position:absolute;left:0;right:0;bottom:0;padding:0 var(--gutter) 34px;color:#f2f5f9}
-  .mtour__head .label{color:#dfe4ec}
-  .mtour__title{margin:12px 0 0;font:500 clamp(40px,12vw,54px)/1.02 var(--display);letter-spacing:-.04em;color:#fff;text-wrap:balance}
-  .mtour__grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px var(--gutter) 0}
-  .mtour__fig{margin:0;aspect-ratio:3/4;overflow:hidden;border-radius:14px;background:#e6ebf2}
-  .mtour__fig--wide{grid-column:1/-1;aspect-ratio:4/3}
-  .mtour__fig img{width:100%;height:100%;object-fit:cover;display:block}
-  .mtour__text{padding:32px var(--gutter) 56px}
-  .mtour__text p{margin:0 0 22px;color:var(--muted);font-size:var(--fs-0);line-height:1.5;text-wrap:pretty}
   /* подписи под фото не показываем */
   .tfig figcaption,.ptour__cap,.ptour__fig figcaption{display:none}
 
@@ -276,9 +262,13 @@ body .pr4-card .pr-price b{font-size:clamp(30px,3.6vw,64px);line-height:1.05;whi
 
   /* акции: фото на всю ширину карточки, со скруглением карточки */
   .pr4-card{padding:0;overflow:hidden;gap:0}
-  .pr4 .pr4-card__pic{flex:none;aspect-ratio:4/3;min-height:0;border-radius:0}
-  .pr4-card__text{padding:20px 20px 24px}
-  .pr4-card:nth-child(1) .pr4-card__pic img{object-position:50% 8%}
+  /* карточки по-прежнему ложатся стопкой: фото сжимается, чтобы карточка влезала в экран */
+  .pr4 .pr4-card__pic{flex:0 1 auto;aspect-ratio:4/3;min-height:150px;border-radius:0}
+  .pr4-card__text{padding:18px 20px 22px}
+  .pr4-card .pr-gift{font-size:17px;line-height:1.35}
+  .pr4-card .au-incl{margin-top:14px}
+  .pr4-card .btn{margin-top:18px}
+  .pr4-card:nth-child(1) .pr4-card__pic img{object-position:50% 30%}
 
   /* врачи: друг за другом вниз */
   .team__grid,.team__grid.au-row{display:grid;grid-template-columns:minmax(0,1fr);gap:44px;overflow:visible;margin-inline:0;padding:0;scroll-snap-type:none}
@@ -322,6 +312,34 @@ body .pr4-card .pr-price b{font-size:clamp(30px,3.6vw,64px);line-height:1.05;whi
   .hx--a[data-v="3"]{opacity:1;top:calc(var(--header-h) + 56px);right:4%;left:auto;width:32vw;height:calc(var(--svh, 1svh) * 17)}
   .hx--a:not(.is-ready)[data-v="2"],.hx--a:not(.is-ready)[data-v="3"]{opacity:.9}
 
-  /* демо-переключатель вариантов */
-  .au-vp{display:flex}
+  /* первый экран: заголовок, подзаголовок и кнопка одной группой внизу, «А» сверху */
+  .hero--v1 h1{margin:auto 0 0}
+  .hero--v .hv__rot{margin-top:18px;min-height:2.5em}
+  .hero--v1 .hero__actions{margin-top:26px}
+  /* подзаголовок меняется плавным появлением, без прокрутки строк (не обрезается) */
+  .hv__rot .sw>span,.hv__rot .is-on .sw>span,.hv__rot .is-out .sw>span{transform:none!important;transition:none!important}
+  .js-anim .hv__rot.is-live>[aria-hidden]{opacity:0;transition:opacity .6s var(--ease)}
+  .js-anim .hv__rot.is-live>[aria-hidden].is-on{opacity:1}
 }
+/* акции на невысоком экране (Safari с панелями, Telegram): компактнее текст, чтобы стопка не распадалась */
+@media (max-width:760px) and (max-height:900px){
+  .pr4 .pr4-card__pic{min-height:120px}
+  .pr4-card__text{padding:14px 18px 18px}
+  .pr4-card .pr-tag{margin-bottom:8px}
+  .pr4-card .pr-title{font-size:22px}
+  .pr4-card .pr-price{margin-top:6px}
+  body .pr4-card .pr-price b{font-size:30px}
+  .pr4-card .pr-gift{display:none}
+  .pr4-card .au-incl{margin-top:10px}
+  .pr4-card .au-incl li{padding-block:5px;font-size:13px}
+  .pr4-card .btn{margin-top:14px}
+}
+/* вторая секция на телефоне: пока фото галереи проезжают по кадру, заголовок уходит, чтобы они на него не наезжали */
+@supports (animation-timeline: view()) and (timeline-scope: --a){
+  @media (max-width:760px){
+    .js-anim .ptour{timeline-scope:--pt-car,--pt-end,--pt-grid}
+    .js-anim .ptour__grid{view-timeline:--pt-grid block}
+    .js-anim .ptour__slogan{animation:au-pt-slogan linear both;animation-timeline:--pt-grid;animation-range:cover 0% cover 100%}
+  }
+}
+@keyframes au-pt-slogan{0%{opacity:1}11%{opacity:0}88%{opacity:0}100%{opacity:1}}

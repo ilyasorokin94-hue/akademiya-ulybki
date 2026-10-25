@@ -410,7 +410,7 @@ CONT = f'''<section class="section ctum" id="contacts" aria-labelledby="ct-title
       <h3>Стоматология «Академия улыбки»</h3>
       <dl class="place__list">
         <div><dt>Адрес</dt><dd>г. Рязань, ул. Попова, 4а</dd></div>
-        <div><dt>Телефон</dt><dd><a href="tel:{TEL}">{PHONE}</a></dd></div>
+        <div><dt>Телефон</dt><dd><a href="tel:{TEL}">{PHONE}</a><br><a href="tel:+74912426062">+7 (4912) 42-60-62</a></dd></div>
         <div><dt>Часы работы</dt><dd>{HOURS}<span class="place__status" data-open-status></span></dd></div>
         <div><dt>Удобства</dt><dd>Парковка, вход без ступенек, Wi-Fi</dd></div>
       </dl>
@@ -431,6 +431,7 @@ foot = re.sub(r'<div class="fstage__info".*?</div>\n  </div>\n  <div class="foot
       <div class="fstage__group">
         <h3>Контакты</h3>
         <a class="fstage__big" href="tel:{TEL}">{PHONE}</a>
+        <a class="fstage__big" href="tel:+74912426062">+7 (4912) 42-60-62</a>
         <a class="fstage__big fstage__big--mail" href="mailto:{MAIL}">{MAIL}</a>
       </div>
       <div class="fstage__group">
@@ -470,7 +471,7 @@ foot = re.sub(r'<div class="fstage__info".*?</div>\n  </div>\n  <div class="foot
     </div>
   </div>
   <div class="footer__legal">''', foot, flags=re.S)
-foot = re.sub(r'<span>© 2026 ООО «ВАЙТИС».*?</span>', '<span>© 2026 Стоматология «Академия улыбки», Рязань. Реквизиты и лицензия на медицинскую деятельность будут указаны на рабочем сайте.</span>', foot, flags=re.S)
+foot = re.sub(r'<span>© 2026 ООО «ВАЙТИС».*?</span>', '<span>© 2026 ООО «Академия улыбки», ИНН 6200008671, ОГРН 1246200007525. 390027, г. Рязань, пл. Попова, д. 4а. Лицензия на медицинскую деятельность: номер будет указан на рабочем сайте.</span>', foot, flags=re.S)
 foot = re.sub(r'<span class="footer__docs">.*?</span>', '<span class="footer__docs"><a href="#">Политика конфиденциальности</a><a href="#">Согласие на обработку персональных данных</a><a href="#" data-cookie-settings>Настройки cookie</a></span>', foot, flags=re.S)
 s = s[:f0] + foot + s[f1:]
 

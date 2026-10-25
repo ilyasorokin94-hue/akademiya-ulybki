@@ -66,7 +66,7 @@ head = head.replace('<meta name="theme-color" content="#ffffff">',
                     f'<meta property="og:type" content="website">\n<meta property="og:title" content="{TITLE}">\n<meta property="og:description" content="{DESC}">\n<meta property="og:locale" content="ru_RU">\n<meta name="theme-color" content="#15171c">')
 head = re.sub(r'<link rel="apple-touch-icon"[^>]*>\n', '', head)
 head = head.replace('<link rel="stylesheet" href="assets/styles.css?v=d847b31c">',
-                    '<link rel="stylesheet" href="assets/styles.css?v=au2">\n<link rel="stylesheet" href="assets/akademiya.css?v=au8">')
+                    '<link rel="stylesheet" href="assets/styles.css?v=au2">\n<link rel="stylesheet" href="assets/akademiya.css?v=au9">')
 # свой прелоадер вместо интро Вайтис: js-intro не ставим, держим страницу под заставкой
 head = head.replace('if(d.dataset.page==="home"&&!sessionStorage.getItem("um2-intro"))d.classList.add("js-intro")',
                     'd.classList.add("au-loading")')
@@ -146,12 +146,12 @@ s = re.sub(r'<div class="hx-switch".*?</div>\n', '', s, count=1)
 
 # ---------- врачи ----------
 DOCS = [
+    dict(slug='lazarev', fam='Лазарев', name='Виктор', otch='Викторович', ini='ВЛ', role='Главный врач, ортопед, хирург',
+         short='Главный врач', exp='Стаж 35 лет', focus='Протезирование на имплантах All-on-4 и All-on-6, виниры, коронки из циркония и керамики, съёмные и несъёмные протезы',
+         tags='protezirovanie implantaciya estetika hirurgiya', chief=True),
     dict(slug='lazareva', fam='Лазарева', name='Элина', otch='Вячеславовна', ini='ЭЛ', role='Терапевт, детский стоматолог',
          short='Терапевт', exp='Стаж 5 лет', focus='Эстетические реставрации, лечение постоянных и молочных зубов, восстановление под коронку, гигиена и отбеливание',
-         tags='lechenie-zubov detskaya estetika gigiena', chief=True),
-    dict(slug='lazarev', fam='Лазарев', name='Виктор', otch='Викторович', ini='ВЛ', role='Ортопед, хирург',
-         short='Ортопед', exp='Стаж 35 лет', focus='Протезирование на имплантах All-on-4 и All-on-6, виниры, коронки из циркония и керамики, съёмные и несъёмные протезы',
-         tags='protezirovanie implantaciya estetika hirurgiya', chief=False),
+         tags='lechenie-zubov detskaya estetika gigiena', chief=False),
     dict(slug='gerasimova', fam='Герасимова', name='Елизавета', otch='Витальевна', ini='ЕГ', role='Гигиенист',
          short='Гигиенист', exp='', focus='Профессиональная гигиена полости рта и отбеливание',
          tags='gigiena estetika', chief=False),
@@ -161,7 +161,7 @@ def doc_photo(d):
 
 
 trio = ''.join(f'<li><a href="#team" aria-label="{d["short"]}: {d["name"]} {d["fam"]}"><span class="hero__face" data-ph><span class="doc__initials" aria-hidden="true">{d["ini"]}</span>{img(doc_photo(d), d["name"] + " " + d["fam"])}</span><b>{d["short"]}</b><span>{d["name"]}<br>{d["fam"]}</span></a></li>' for d in DOCS)
-SLOGAN_T = 'Здесь улыбки получают диплом.'
+SLOGAN_T = 'Выпускаем счастливые улыбки.'
 SLOGAN = f'''<section class="slogan on-dark" aria-label="{SLOGAN_T}">
   <div class="marquee" aria-hidden="true"><div class="marquee__track">{''.join(f'<span class="marquee__item">{SLOGAN_T} <em>{SLOGAN_T}</em></span>' for _ in range(4))}</div></div>
   <div class="slogan__head" aria-hidden="true"><p class="slogan__title"><span class="line">{SLOGAN_T}</span></p></div>
@@ -260,7 +260,8 @@ CHIEF_FMT = ['Протезирование всей челюсти на импл
 CHIEF_RULES = [('Сначала план', 'Диагностика и снимок до лечения. Пациент заранее знает каждый этап.'),
                ('Под увеличением', 'Микроскоп и бинокуляры на каждом приёме, а не по особому случаю.'),
                ('Сложное решаем сами', 'От одного импланта до протеза всей челюсти, без пересылок по клиникам.')]
-CHIEF = f'''<section class="section au-chief on-dark" id="chief" aria-labelledby="ch-title"><div class="wrap au-chief__in">
+CHIEF = f'''<section class="section au-chief on-dark" id="chief" data-v="1" aria-labelledby="ch-title"><div class="wrap au-chief__in">
+  <span class="au-chief__big" aria-hidden="true">35</span>
   <figure class="au-chief__pic" data-reveal>{img("images/doctors/lazarev.webp?v=2", "Лазарев Виктор Викторович, главный врач")}<figcaption><b>35</b><span>лет практики<br>с 1991 года</span></figcaption></figure>
   <div class="au-chief__body">
     <span class="label label--light">Главный врач</span>
@@ -357,9 +358,9 @@ def doc_card(d, col):
   <p class="doc__focus">{d["focus"]}</p>
   <a class="btn btn--ghost btn--sm doc__cta" href="zapis?doctor={d["slug"]}" data-modal="book" data-doctor="{d["slug"]}">Записаться к врачу</a>
 </article>'''
-TEAM = f'''<section class="section section--sage" id="team" aria-labelledby="tm-title"><div class="wrap">
-  <div class="section__head"><div><span class="label">Врачи</span><h2 id="tm-title" data-split>Кто будет вас лечить</h2></div><p>Семейная команда выпускников РязГМУ: терапевт и детский стоматолог, ортопед-хирург со стажем 35 лет и гигиенист.</p></div>
-  <div class="team__grid team__grid--lava">{''.join(doc_card(d, "lr"[i % 2]) for i, d in enumerate(DOCS))}</div>
+TEAM = f'''<section class="section section--sage au-team" id="team" data-v="1" aria-labelledby="tm-title"><div class="wrap">
+  <div class="section__head"><div><span class="label">Врачи</span><h2 id="tm-title" data-split>Кто будет вас лечить</h2></div><p>Семейная команда выпускников РязГМУ: главный врач, ортопед и хирург со стажем 35 лет, терапевт и детский стоматолог, гигиенист.</p></div>
+  <div class="team__grid au-row">{''.join(doc_card(d, "lr"[i % 2]) for i, d in enumerate(DOCS))}</div>
 </div></section>'''
 i = s.index('<section class="section section--sage" id="team"')
 j = s.index('</div></section>', s.index('</article></div>', i)) + len('</div></section>')
@@ -544,6 +545,14 @@ s = re.sub(r'\+7\W903\W797-76-88', PHONE, s)
 s = s.replace('images/brand/header-logo-light.svg', 'images/brand/header-logo.svg')
 s = s.replace('Вайтис', 'Академия улыбки').replace('White Teeth', 'Академия улыбки')
 
+# ---------- демо-переключатель вариантов (убрать после выбора) ----------
+VPANEL = """<div class="au-vp" role="group" aria-label="Варианты оформления (демо)"><b>Варианты</b>
+<span>Главный врач</span><span class="au-vp__g" data-t="chief"><button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button><button data-v="4">4</button></span>
+<span>Врачи</span><span class="au-vp__g" data-t="team"><button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button><button data-v="4">4</button></span></div>
+<script>(function(){var K="au-v-";function set(t,v,go){var el=document.getElementById(t);if(!el)return;el.setAttribute("data-v",v);document.querySelectorAll('.au-vp__g[data-t="'+t+'"] button').forEach(function(b){b.classList.toggle("on",b.getAttribute("data-v")==v)});try{localStorage.setItem(K+t,v)}catch(e){}if(go)el.scrollIntoView({behavior:"smooth"});if(window.ScrollTrigger)ScrollTrigger.refresh()}
+document.querySelectorAll(".au-vp__g").forEach(function(g){var t=g.getAttribute("data-t"),v="1";try{v=localStorage.getItem(K+t)||"1"}catch(e){}set(t,v);g.addEventListener("click",function(e){var b=e.target.closest("button");if(b)set(t,b.getAttribute("data-v"),true)})})})();</script>
+"""
+s = s.replace('</body>', VPANEL + '</body>', 1)
 open(os.path.join(ROOT, 'index.html'), 'w', encoding='utf-8').write(s)
 left = [w for w in ['Одинцов', 'Одинбург', 'Северная', 'Гвиниашвили', 'Чилингарян', 'Казарян', 'wtdent', '79037977688', 'Смирнов', 'Ткачук'] if w in s]
 print('OK', len(s), 'leftovers:', left)

@@ -1,6 +1,7 @@
 // Объёмная «А» из логотипа справа на первом экране: чёрный глянцевый акрил,
 // как знак на стене клиники. Медленно вращается и чуть следует за курсором.
-import * as THREE from 'three';
+import { WebGLRenderer, Scene, PMREMGenerator, PerspectiveCamera, DirectionalLight, AmbientLight, MeshPhysicalMaterial, Group, ExtrudeGeometry, Mesh, Box3, Vector3, Clock, MathUtils, ACESFilmicToneMapping, SRGBColorSpace } from 'three';
+var THREE = { WebGLRenderer, Scene, PMREMGenerator, PerspectiveCamera, DirectionalLight, AmbientLight, MeshPhysicalMaterial, Group, ExtrudeGeometry, Mesh, Box3, Vector3, Clock, MathUtils, ACESFilmicToneMapping, SRGBColorSpace };
 import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 
@@ -8,14 +9,17 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
   var box = document.querySelector('.hx--a'), data = document.getElementById('logo-a');
   if (!box || !data) return;
   try {
-    var c = document.createElement('canvas');
-    if (!(c.getContext('webgl2') || c.getContext('webgl'))) return;
-  } catch (e) { return; }
+    var c = document.createElement('canvas'), gl = c.getContext('webgl2') || c.getContext('webgl');
+    if (!gl) return box.classList.add('is-flat');
+    // без видеокарты (программный WebGL) вращение грузит процессор: оставляем плоский знак
+    var dbg = gl.getExtension('WEBGL_debug_renderer_info');
+    if (dbg && /swiftshader|llvmpipe|software|basic render/i.test(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL))) return box.classList.add('is-flat');
+  } catch (e) { return box.classList.add('is-flat'); }
   var parts = JSON.parse(data.textContent);
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   box.appendChild(renderer.domElement);

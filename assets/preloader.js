@@ -12,6 +12,9 @@
     if (heroStart) heroStart();
   }
   if (!pl) { release(); return; }
+  // заставка один раз за визит: при повторном открытии в той же вкладке сразу страница
+  if (d.classList.contains('au-nopl')) { release(); pl.remove(); return; }
+  try { sessionStorage.setItem('au-pl', '1'); } catch (e) {}
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduce || !window.gsap) { release(); pl.remove(); return; }
 
@@ -75,5 +78,5 @@
     .add(function () { pl.remove(); });
 
   // если вкладка открыта в фоне, не держим страницу
-  if (!dbg) setTimeout(function () { release(); if (pl.isConnected) pl.remove(); }, 7000);
+  if (!dbg) setTimeout(function () { release(); if (pl.isConnected) pl.remove(); }, 5000);
 })();

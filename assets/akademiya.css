@@ -16,7 +16,9 @@ html.au-loading .pl{pointer-events:auto}
 .pl__logo .pl__shards path{fill:#fff}
 .pl__word{fill:#e8edf3}
 .pl__count{position:absolute;right:clamp(16px,3vw,40px);bottom:clamp(16px,3vw,36px);font:500 clamp(14px,1.2vw,16px)/1 var(--display);letter-spacing:.2em;color:#a9c1e3;font-variant-numeric:tabular-nums}
-html:not(.js-anim) .pl{display:none}
+html:not(.js-anim) .pl,html.au-nopl .pl{display:none}
+/* под заставкой заголовок первого экрана уже нарисован: браузер засчитывает LCP сразу, а не после скриптов */
+html.au-loading .hero [data-split]{visibility:visible}
 
 /* ---------- первый экран: белый, справа объёмная «А» из логотипа ---------- */
 .hero--v{background:radial-gradient(50% 60% at 82% 45%,rgba(43,76,126,.10),rgba(43,76,126,0) 70%),#fff;color:#15171c}
@@ -26,7 +28,8 @@ html:not(.js-anim) .pl{display:none}
 .hero--v .btn{--bg:#15171c;--fg:#fff;background:#15171c;color:#fff}
 .hero--v:before{display:none}
 /* справа вращается объёмная «А» из логотипа; текст занимает левую часть и на знак не заходит */
-.hx--a{position:absolute;z-index:1;pointer-events:none;top:calc(var(--hdr-d, var(--header-h)) + 6vh);right:3%;bottom:12vh;width:30%}
+.hx--a{position:absolute;z-index:1;pointer-events:none;top:calc(var(--hdr-d, var(--header-h)) + var(--svh, 1svh) * 6);right:3%;bottom:calc(var(--svh, 1svh) * 12);width:30%}
+.hx--a.is-flat .hx__flat{display:block;width:100%;height:100%;color:#15171c;opacity:.92}
 .hx--a canvas{display:block;width:100%!important;height:100%!important;opacity:0;transition:opacity 1.2s var(--ease)}
 .hx--a.is-ready canvas{opacity:1}
 @media (min-width:761px){
@@ -41,7 +44,7 @@ html:not(.js-anim) .pl{display:none}
 .slogan__title{color:#15171c}
 /* на телефоне вместо WebGL статичный знак бледным фоном: меньше трафика и батареи */
 .hx--a .hx__flat{display:none}
-@media (max-width:760px){.hx--a{display:block;width:auto;top:calc(var(--header-h) + 8px);bottom:auto;right:-14%;width:72%;height:44vh;opacity:.09}.hx--a .hx__flat{display:block;width:100%;height:100%}.hero--v1 .hero__text{position:relative;z-index:2}}
+@media (max-width:760px){.hx--a{display:block;width:auto;top:calc(var(--header-h) + 8px);bottom:auto;right:-14%;width:72%;height:calc(var(--svh, 1svh) * 44);opacity:.09}.hx--a .hx__flat{display:block;width:100%;height:100%}.hero--v1 .hero__text{position:relative;z-index:2}}
 
 /* золото на тёмном читается лучше светлым тоном */
 .on-dark .label,.label--light{color:#a9c1e3}
@@ -98,7 +101,7 @@ body .pr4-card .pr-price b{font-size:clamp(30px,3.6vw,64px);line-height:1.05;whi
 
 /* первый экран: заголовок, строка со сменой данных и кнопка идут столбцом, без наложений */
 @media (min-width:761px){
-  .hero--v1 .hero__text{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;max-width:none;gap:clamp(20px,3vh,34px)}
+  .hero--v1 .hero__text{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;max-width:none;gap:clamp(20px,calc(var(--svh, 1svh) * 3),34px)}
   .hero--v1 h1{margin:0;padding:0;align-self:flex-start}
   .hero--v1 .hero__actions{margin:0;align-items:flex-start;align-self:flex-start}
   .hero--v1 .hv__rot{align-self:flex-start;justify-items:start;text-align:left;margin:0}

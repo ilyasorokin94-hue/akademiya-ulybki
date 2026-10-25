@@ -36,26 +36,48 @@ ASK = {
 }
 
 
+SHOW_ASK = False  # пометки «уточнить» скрыты для показа клиенту
+
+def _dims(p):
+    try:
+        from PIL import Image
+        return Image.open(os.path.join(ROOT, p.split('?')[0])).size
+    except Exception:
+        return None
+
+# ширина показа на компьютере в vw, замерена в браузере (src/img-sizes.json)
+try:
+    IMG_VW = json.load(open(os.path.join(ROOT, 'src/img-sizes.json'), encoding='utf-8'))
+except Exception:
+    IMG_VW = {}
+
 def img(path, alt='', cls='', style='', extra=''):
     if not path:
         return ''
     a = f'<img src="{path}" alt="{html.escape(alt)}" loading="lazy" decoding="async" onerror="umImg(this)"'
+    d = _dims(path)
+    if d and 'width=' not in extra:
+        a += f' width="{d[0]}" height="{d[1]}"'
     # у крупных фото есть копия 900 px для телефонов
-    m = path[:-5] + '-m.webp'
-    if path.endswith('.webp') and os.path.exists(os.path.join(ROOT, m)) and 'srcset' not in extra:
-        a += f' srcset="{m} 900w, {path} 1800w" sizes="(max-width: 760px) 100vw, 50vw"'
+    base = path.split('?')[0]
+    q = path[len(base):]
+    m = base[:-5] + '-m.webp'
+    if base.endswith('.webp') and os.path.exists(os.path.join(ROOT, m)) and 'srcset' not in extra and d:
+        dm = _dims(m)
+        a += f' srcset="{m}{q} {dm[0]}w, {path} {d[0]}w" sizes="(max-width: 760px) 60vw, {IMG_VW.get(base, 50)}vw"'
     if cls: a += f' class="{cls}"'
     if style: a += f' style="{style}"'
     if extra: a += ' ' + extra
     a += '>'
-    if path in ASK:
+    if SHOW_ASK and path in ASK:
         a += f'<span class="au-ask" title="{ASK[path]}">уточнить</span>'
     return a
 
 
 # ---------- HEAD ----------
-TITLE = 'Стоматология «Академия улыбки» в Рязани: лечение под микроскопом, импланты, дети'
-DESC = '5,0 на Яндекс Картах. Лечение зубов под микроскопом, имплантация и All-on-4, коронки из циркония, детская стоматология. Рязань, ул. Попова, 4а, ежедневно с 9:00 до 21:00. Консультация и снимок бесплатно.'
+SITE_URL = 'https://ilyasorokin94-hue.github.io/akademiya-ulybki/'
+TITLE = 'Стоматология «Академия улыбки» в Рязани: микроскоп, импланты, дети'
+DESC = 'Лечение зубов под микроскопом, импланты и All-on-4, детская стоматология. Рязань, ул. Попова, 4а, ежедневно с 9 до 21. Консультация и снимок бесплатно.'
 head_end = s.index('</head>')
 head = s[:head_end]
 head = re.sub(r'<title>.*?</title>', f'<title>{TITLE}</title>', head)
@@ -63,13 +85,14 @@ head = re.sub(r'<meta name="description" content="[^"]*">', f'<meta name="descri
 head = re.sub(r'<link rel="canonical"[^>]*>\n', '', head)
 head = re.sub(r'<meta property="og:[^>]*>\n', '', head)
 head = head.replace('<meta name="theme-color" content="#ffffff">',
-                    f'<meta property="og:type" content="website">\n<meta property="og:title" content="{TITLE}">\n<meta property="og:description" content="{DESC}">\n<meta property="og:locale" content="ru_RU">\n<meta name="theme-color" content="#15171c">')
+                    f'<meta property="og:type" content="website">\n<meta property="og:title" content="{TITLE}">\n<meta property="og:description" content="{DESC}">\n<meta property="og:locale" content="ru_RU">\n<meta property="og:url" content="{SITE_URL}">\n<meta property="og:image" content="{SITE_URL}images/og.jpg">\n<meta property="og:image:width" content="1200">\n<meta property="og:image:height" content="630">\n<meta name="twitter:card" content="summary_large_image">\n<meta name="theme-color" content="#15171c">')
 head = re.sub(r'<link rel="apple-touch-icon"[^>]*>\n', '', head)
+head = head.replace('<link rel="icon" type="image/svg+xml" href="images/brand/favicon.svg">', '<link rel="icon" type="image/svg+xml" href="images/brand/favicon.svg">\n<link rel="apple-touch-icon" href="images/brand/apple-touch-icon.png">')
 head = head.replace('<link rel="stylesheet" href="assets/styles.css?v=d847b31c">',
                     '<link rel="stylesheet" href="assets/styles.css?v=au2">\n<link rel="stylesheet" href="assets/akademiya.css?v=au9">')
 # свой прелоадер вместо интро Вайтис: js-intro не ставим, держим страницу под заставкой
 head = head.replace('if(d.dataset.page==="home"&&!sessionStorage.getItem("um2-intro"))d.classList.add("js-intro")',
-                    'd.classList.add("au-loading")')
+                    'if(sessionStorage.getItem("au-pl"))d.classList.add("au-nopl");else d.classList.add("au-loading")')
 head = re.sub(r'<script type="application/ld\+json">.*?</script>\n', '', head, flags=re.S)
 LD = {"@context": "https://schema.org", "@type": "Dentist", "name": "Стоматология «Академия улыбки»",
       "telephone": PHONE, "email": MAIL,
@@ -81,8 +104,10 @@ head = head.replace('</script>\n<script src="assets/vendor/gsap.min.js"',
 head += '<script type="application/ld+json">' + json.dumps(LD, ensure_ascii=False) + '</script>\n'
 head = head.replace('<script src="assets/cookie.js?v=886e3f70" data-privacy="privacy/" data-ym="" defer></script>',
                     '<script src="assets/cookie.js?v=886e3f70" data-privacy="#" data-ym="" defer></script>')
-head = re.sub(r'<script src="assets/hero-3d.js[^"]*" defer></script>\n', '<script>if(matchMedia("(min-width: 761px)").matches)addEventListener("DOMContentLoaded",function(){var t=document.createElement("script");t.src="assets/logo-3d.js?v=au4";document.head.appendChild(t)})</script>\n', head)
-head = head.replace('<script src="assets/app.js?v=9b97a404" defer></script>', '<script src="assets/preloader.js?v=au1" defer></script>\n<script src="assets/app.js?v=au1" defer></script>')
+head = re.sub(r'<script src="assets/hero-3d.js[^"]*" defer></script>\n', '<script>if(matchMedia("(min-width: 761px)").matches)addEventListener("load",function(){var go=function(){var t=document.createElement("script");t.src="assets/logo-3d.js?v=au5";document.head.appendChild(t)};window.requestIdleCallback?requestIdleCallback(go,{timeout:1500}):setTimeout(go,300)})</script>\n', head)
+# латиницу не грузим заранее: в заголовке первого экрана только кириллица
+head = re.sub(r'<link rel="preload" href="assets/fonts/[a-z-]+-latin\.woff2"[^>]*>\n', '', head)
+head = head.replace('<script src="assets/app.js?v=9b97a404" defer></script>', '<script src="assets/preloader.js?v=au2" defer></script>\n<script src="assets/app.js?v=au2" defer></script>')
 s = head + s[head_end:]
 
 # ---------- демо-плашка, прелоадер ----------
@@ -267,7 +292,7 @@ CHIEF = f'''<section class="section au-chief" id="chief" data-v="4" aria-labelle
     <span class="label label--light">Главный врач</span>
     <h2 id="ch-title" class="au-chief__name" data-split>Виктор Викторович Лазарев</h2>
     <p class="au-chief__role">Стоматолог-ортопед и хирург, выпускник РязГМУ. Идеолог «Академии улыбки».</p>
-    <blockquote class="au-chief__quote" data-reveal><p>«Академия для меня не вывеска. Врач учится всю жизнь, а пациент уходит не просто с вылеченным зубом, а с улыбкой, которую не стыдно показать.»</p><span class="au-ask au-ask--inline">цитату согласовать</span></blockquote>
+    <blockquote class="au-chief__quote" data-reveal><p>«Академия для меня не вывеска. Врач учится всю жизнь, а пациент уходит не просто с вылеченным зубом, а с улыбкой, которую не стыдно показать.»</p></blockquote>
     <ol class="au-chief__rules">{''.join(f'<li data-reveal><b>{a}</b><span>{b}</span></li>' for a, b in CHIEF_RULES)}</ol>
     <div class="au-chief__fmt"><p class="au-incl__t">С чем приходят к Виктору Викторовичу</p><ul>{''.join(f'<li>{x}</li>' for x in CHIEF_FMT)}</ul></div>
     <a class="btn btn--lg" href="zapis?doctor=lazarev" data-modal="book" data-doctor="lazarev">Записаться к главному врачу</a>
@@ -552,6 +577,9 @@ VPANEL = """<div class="au-vp" role="group" aria-label="Варианты офо�
 document.querySelectorAll(".au-vp__g").forEach(function(g){var t=g.getAttribute("data-t"),v="1";try{v=localStorage.getItem(K+t)||"1"}catch(e){}set(t,v);g.addEventListener("click",function(e){var b=e.target.closest("button");if(b)set(t,b.getAttribute("data-v"),true)})})})();</script>
 """
 # s = s.replace('</body>', VPANEL + '</body>', 1)  # демо-панель отключена: варианты выбраны
+# свои стили встраиваем в страницу: на один блокирующий запрос меньше
+s = s.replace('<link rel="stylesheet" href="assets/akademiya.css?v=au9">', '<style>' + re.sub(r'/\*.*?\*/', '', open(os.path.join(ROOT, 'assets/akademiya.css'), encoding='utf-8').read().replace('\n', '')) + '</style>')
+s = re.sub(r'href="zapis(\?doctor=\w+)?"', 'href="#contacts"', s)
 open(os.path.join(ROOT, 'index.html'), 'w', encoding='utf-8').write(s)
 left = [w for w in ['Одинцов', 'Одинбург', 'Северная', 'Гвиниашвили', 'Чилингарян', 'Казарян', 'wtdent', '79037977688', 'Смирнов', 'Ткачук'] if w in s]
 print('OK', len(s), 'leftovers:', left)

@@ -40,6 +40,10 @@ def img(path, alt='', cls='', style='', extra=''):
     if not path:
         return ''
     a = f'<img src="{path}" alt="{html.escape(alt)}" loading="lazy" decoding="async" onerror="umImg(this)"'
+    # у крупных фото есть копия 900 px для телефонов
+    m = path[:-5] + '-m.webp'
+    if path.endswith('.webp') and os.path.exists(os.path.join(ROOT, m)) and 'srcset' not in extra:
+        a += f' srcset="{m} 900w, {path} 1800w" sizes="(max-width: 760px) 100vw, 50vw"'
     if cls: a += f' class="{cls}"'
     if style: a += f' style="{style}"'
     if extra: a += ' ' + extra
@@ -62,7 +66,7 @@ head = head.replace('<meta name="theme-color" content="#ffffff">',
                     f'<meta property="og:type" content="website">\n<meta property="og:title" content="{TITLE}">\n<meta property="og:description" content="{DESC}">\n<meta property="og:locale" content="ru_RU">\n<meta name="theme-color" content="#15171c">')
 head = re.sub(r'<link rel="apple-touch-icon"[^>]*>\n', '', head)
 head = head.replace('<link rel="stylesheet" href="assets/styles.css?v=d847b31c">',
-                    '<link rel="stylesheet" href="assets/styles.css?v=au2">\n<link rel="stylesheet" href="assets/akademiya.css?v=au3">')
+                    '<link rel="stylesheet" href="assets/styles.css?v=au2">\n<link rel="stylesheet" href="assets/akademiya.css?v=au5">')
 # свой прелоадер вместо интро Вайтис: js-intro не ставим, держим страницу под заставкой
 head = head.replace('if(d.dataset.page==="home"&&!sessionStorage.getItem("um2-intro"))d.classList.add("js-intro")',
                     'd.classList.add("au-loading")')
@@ -77,7 +81,7 @@ head = head.replace('</script>\n<script src="assets/vendor/gsap.min.js"',
 head += '<script type="application/ld+json">' + json.dumps(LD, ensure_ascii=False) + '</script>\n'
 head = head.replace('<script src="assets/cookie.js?v=886e3f70" data-privacy="privacy/" data-ym="" defer></script>',
                     '<script src="assets/cookie.js?v=886e3f70" data-privacy="#" data-ym="" defer></script>')
-head = re.sub(r'<script src="assets/hero-3d.js[^"]*" defer></script>\n', '<script src="assets/logo-3d.js?v=au1" defer></script>\n', head)
+head = re.sub(r'<script src="assets/hero-3d.js[^"]*" defer></script>\n', '<script>if(matchMedia("(min-width: 761px)").matches)addEventListener("DOMContentLoaded",function(){var t=document.createElement("script");t.src="assets/logo-3d.js?v=au3";document.head.appendChild(t)})</script>\n', head)
 head = head.replace('<script src="assets/app.js?v=9b97a404" defer></script>', '<script src="assets/preloader.js?v=au1" defer></script>\n<script src="assets/app.js?v=au1" defer></script>')
 s = head + s[head_end:]
 
@@ -124,14 +128,15 @@ def rot(lines):
     for words in lines:
         out += '<span aria-hidden="true">' + ' '.join(f'<span class="sw"><span style="--i:{i}">{w}</span></span>' for i, w in enumerate(words)) + '</span>'
     return out
-ROT = [['Лечим', 'под микроскопом', 'и бинокулярами.'],
+ROT = [['Микроскоп', 'и бинокуляры', 'на каждом приёме.'],
        ['Рязань,', 'ул. Попова, 4а,', 'с 9:00', 'до 21:00.'],
        ['Консультация,', 'план лечения', 'и снимок', 'бесплатно.']]
 LOGO_A = json.dumps({k: logo[k] for k in ('cap', 'a', 'thin', 'sw')})
-HERO = f'''<section class="hero hero--v hero--v1" aria-labelledby="h1"><div class="hx--a" aria-hidden="true"></div><script type="application/json" id="logo-a">{LOGO_A}</script><div class="wrap hero__in">
+MAIN = 'Лечение под микроскопом'  # главный предмет: основная услуга клиники
+HERO = f'''<section class="hero hero--v hero--v1" aria-labelledby="h1"><div class="hx--a" aria-hidden="true"><svg class="hx__flat" viewBox="230 30 470 600" preserveAspectRatio="xMidYMid meet">{''.join(f'<path d="{logo[k]}"/>' for k in ('cap', 'a', 'thin', 'sw'))}</svg></div><script type="application/json" id="logo-a">{LOGO_A}</script><div class="wrap hero__in">
   <div class="hero__text">
-    <h1 id="h1"><span data-split>Ваша улыбка</span> <span class="hv__l2" data-split>главный предмет Академии.</span></h1>
-    <p class="hv__rot"><span class="sr">Лечим под микроскопом и бинокулярами. Рязань, ул. Попова, 4а, ежедневно с 9:00 до 21:00. Консультация, план лечения и снимок бесплатно.</span>{rot(ROT)}</p>
+    <h1 id="h1"><span data-split>Ваша улыбка</span> <span class="hv__l2" data-split>{MAIN}</span> <span class="hv__l3"><span class="hv__a"><span class="hv__a-t">А</span></span><span data-split>кадемии.</span></span></h1>
+    <p class="hv__rot"><span class="sr">Микроскоп и бинокуляры на каждом приёме. Рязань, ул. Попова, 4а, ежедневно с 9:00 до 21:00. Консультация, план лечения и снимок бесплатно.</span>{rot(ROT)}</p>
     <div class="hero__actions"><a class="btn btn--lg" href="zapis" data-modal="book" data-magnet>Записаться на бесплатную консультацию</a></div>
   </div>
 </div></section>'''
@@ -157,11 +162,11 @@ def doc_photo(d):
 
 
 trio = ''.join(f'<li><a href="#team" aria-label="{d["short"]}: {d["name"]} {d["fam"]}"><span class="hero__face" data-ph><span class="doc__initials" aria-hidden="true">{d["ini"]}</span>{img(doc_photo(d), d["name"] + " " + d["fam"])}</span><b>{d["short"]}</b><span>{d["name"]}<br>{d["fam"]}</span></a></li>' for d in DOCS)
-SLOGAN_T = 'Учим улыбаться заново.'
+SLOGAN_T = 'Выпускаем счастливые улыбки.'
 SLOGAN = f'''<section class="slogan on-dark" aria-label="{SLOGAN_T}">
   <div class="marquee" aria-hidden="true"><div class="marquee__track">{''.join(f'<span class="marquee__item">{SLOGAN_T} <em>{SLOGAN_T}</em></span>' for _ in range(4))}</div></div>
   <div class="slogan__head" aria-hidden="true"><p class="slogan__title"><span class="line">{SLOGAN_T}</span></p></div>
-  <div class="slogan__more"><div class="wrap"><ul class="hero__trio" aria-label="Врачи клиники">{trio}</ul></div></div>
+  <div class="slogan__more"><div class="wrap"><p class="au-slogan-sub">Стаж главного врача 35 лет. Каждый пациент уходит с улыбкой, которой не стыдно гордиться.</p><ul class="hero__trio" aria-label="Врачи клиники">{trio}</ul></div></div>
 </section>'''
 block('<section class="slogan on-dark"', '</section>', SLOGAN)
 

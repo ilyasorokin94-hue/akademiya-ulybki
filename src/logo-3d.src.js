@@ -1,11 +1,11 @@
-// Объёмная «А» из логотипа «Академии улыбки» на первом экране: чёрный глянцевый акрил,
-// как знак на стене клиники. Медленно вращается и чуть следует за курсором.
+// Объёмная «А» из логотипа: первая буква слова «Академии» в заголовке первого экрана.
+// Чёрный глянцевый акрил, как знак на стене клиники; плавно покачивается и следует за курсором.
 import * as THREE from 'three';
 import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 
 (function () {
-  var box = document.querySelector('.hx--a'), data = document.getElementById('logo-a');
+  var box = document.querySelector('.hv__a'), data = document.getElementById('logo-a');
   if (!box || !data) return;
   try {
     var c = document.createElement('canvas');
@@ -47,15 +47,13 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
   group.add(inner); scene.add(group);
 
   // мягкая синяя тень-пятно под знаком
-  var sh = new THREE.Mesh(new THREE.CircleGeometry(size.x * 0.42, 48), new THREE.MeshBasicMaterial({ color: 0x2b4c7e, transparent: true, opacity: 0.10 }));
-  sh.rotation.x = -Math.PI / 2; sh.position.y = -size.y * 0.62; sh.scale.set(1, 0.32, 1); scene.add(sh);
 
   function fit() {
-    var w = box.clientWidth, h = box.clientHeight; if (!w || !h) return;
+    var cv = renderer.domElement, w = cv.clientWidth, h = cv.clientHeight; if (!w || !h) return;
     renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
     var dist = camera.position.z, vh = 2 * dist * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
-    var k = Math.min((vh * 0.74) / size.y, (vh * camera.aspect * 0.78) / size.x);
-    group.scale.setScalar(k); sh.scale.set(k, 0.32 * k, k);
+    var k = Math.min((vh * 0.98) / size.y, (vh * camera.aspect * 0.95) / size.x);
+    group.scale.setScalar(k);
   }
   fit(); addEventListener('resize', fit);
 
@@ -63,18 +61,17 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
   addEventListener('pointermove', function (e) { mx = (e.clientX / innerWidth) * 2 - 1; my = (e.clientY / innerHeight) * 2 - 1; }, { passive: true });
   var visible = true;
   new IntersectionObserver(function (en) { visible = en[0].isIntersecting; }).observe(box);
-  var clock = new THREE.Clock(), angle = -0.6, intro = 0;
+  var clock = new THREE.Clock(), intro = 0;
   function tick() {
     requestAnimationFrame(tick);
     if (!visible) return;
     var dt = Math.min(clock.getDelta(), 0.05);
     intro = Math.min(1, intro + dt * 0.6);
-    angle += dt * (reduce ? 0 : 0.42);
     tx += (mx - tx) * 0.05; ty += (my - ty) * 0.05;
     var e = 1 - Math.pow(1 - intro, 3);
-    group.rotation.y = angle + tx * 0.35;
-    group.rotation.x = 0.08 + ty * 0.12 + (1 - e) * 0.5;
-    group.position.y = Math.sin(clock.elapsedTime * 0.9) * size.y * group.scale.y * 0.015;
+    var t = clock.elapsedTime;
+    group.rotation.y = (reduce ? 0 : Math.sin(t * 0.7) * 0.55) + tx * 0.3 + (1 - e) * 1.6;
+    group.rotation.x = 0.05 + ty * 0.1;
     renderer.render(scene, camera);
   }
   tick();

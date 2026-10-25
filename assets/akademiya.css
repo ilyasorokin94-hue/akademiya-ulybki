@@ -25,33 +25,23 @@ html:not(.js-anim) .pl{display:none}
 .hero--v .hv__rot{color:#4b515b}
 .hero--v .btn{--bg:#15171c;--fg:#fff;background:#15171c;color:#fff}
 .hero--v:before{display:none}
-/* фоновый знак остаётся только на телефоне */
-.hx--a{position:absolute;z-index:1;pointer-events:none;display:none}
-/* «А» в слове «Академии»: на десктопе это вращающийся 3D-знак, на телефоне обычная буква */
-.hv__l3{display:block;white-space:nowrap}
-.hero--v1 h1 .hv__l3>[data-split]{display:inline-block!important;vertical-align:baseline}
-@media (max-width:760px){.hero--v1 h1{font-size:clamp(34px,11vw,50px)}}
-.hv__a{display:inline-block;position:relative}
-.hv__a canvas{position:absolute;display:block;opacity:0;transition:opacity 1s var(--ease)}
-.hv__a.is-ready canvas{opacity:1}
-.hv__a.is-ready .hv__a-t{visibility:hidden}
+/* справа вращается объёмная «А» из логотипа; текст занимает левую часть и на знак не заходит */
+.hx--a{position:absolute;z-index:1;pointer-events:none;top:calc(var(--hdr-d, var(--header-h)) + 6vh);right:3%;bottom:12vh;width:30%}
+.hx--a canvas{display:block;width:100%!important;height:100%!important;opacity:0;transition:opacity 1.2s var(--ease)}
+.hx--a.is-ready canvas{opacity:1}
 @media (min-width:761px){
-  .hero--v1 .hero__text{max-width:none}
-  .hero--v1 h1{font-size:clamp(48px,5.6vw,104px);line-height:1.05;letter-spacing:-.05em;padding-bottom:clamp(20px,3vh,40px)}
-  .hero--v1 .hv__l2{display:block;white-space:nowrap}
-  .hero--v1 h1>span:first-child{display:block}
-  .hero--v1 .hv__l3{margin-top:.3em}
-  .hero--v1 h1 .hv__l3>[data-split]{display:inline-block!important;vertical-align:baseline}
-  .hv__a{width:.7em;height:.72em;margin-right:.04em;vertical-align:baseline}
-  .hv__a canvas{left:-.36em;top:-.48em;width:1.5em!important;height:1.24em!important}
+  .hero--v1 .hero__text{max-width:60%}
+  .hero--v1 h1{font-size:clamp(44px,4.4vw,84px);line-height:1.02;letter-spacing:-.05em}
+  .hero--v1 h1>span:first-child,.hero--v1 .hv__l2{display:block;white-space:nowrap}
   .hero--v .hv__rot{white-space:nowrap;max-width:none;font-size:clamp(18px,1.45vw,24px)}
   .hero--v .hv__rot>[aria-hidden]{text-wrap:nowrap}
 }
+@media (max-width:760px){.hero--v1 h1{font-size:clamp(34px,11vw,50px)}}
 .au-slogan-sub{margin:0 0 28px;max-width:34em;font:500 var(--fs-0)/1.4 var(--display);color:#dfe4ec}
 .slogan__title{color:#15171c}
 /* на телефоне вместо WebGL статичный знак бледным фоном: меньше трафика и батареи */
 .hx--a .hx__flat{display:none}
-@media (max-width:760px){.hx--a{display:block;top:calc(var(--header-h) + 8px);bottom:auto;right:-14%;width:72%;height:44vh;opacity:.09}.hx--a .hx__flat{display:block;width:100%;height:100%}.hero--v1 .hero__text{position:relative;z-index:2}}
+@media (max-width:760px){.hx--a{display:block;width:auto;top:calc(var(--header-h) + 8px);bottom:auto;right:-14%;width:72%;height:44vh;opacity:.09}.hx--a .hx__flat{display:block;width:100%;height:100%}.hero--v1 .hero__text{position:relative;z-index:2}}
 
 /* золото на тёмном читается лучше светлым тоном */
 .on-dark .label,.label--light{color:#a9c1e3}
@@ -101,3 +91,39 @@ html:not(.js-anim) .pl{display:none}
 /* инициалы лежат под фото и видны, только если фото нет */
 .hero__face img,.invite__pic img{position:relative;z-index:1}
 .invite__pic img{width:100%;height:100%;object-fit:cover;object-position:50% 10%}
+
+/* акции без цен: вместо суммы короткий тезис, шрифт меньше */
+.pr-price b{font-size:clamp(30px,2.8vw,48px);line-height:1.1}
+
+/* первый экран: заголовок, строка со сменой данных и кнопка идут столбцом, без наложений */
+@media (min-width:761px){
+  .hero--v1 .hero__text{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;max-width:none;gap:clamp(20px,3vh,34px)}
+  .hero--v1 h1{margin:0;padding:0;align-self:flex-start}
+  .hero--v1 .hero__actions{margin:0;align-items:flex-start;align-self:flex-start}
+  .hero--v1 .hv__rot{align-self:flex-start;justify-items:start;text-align:left;margin:0}
+}
+
+/* ---------- главный врач ---------- */
+.au-chief{background:#0f1115;color:#f2f5f9}
+.au-chief__in{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(32px,6vw,110px);align-items:center}
+.au-chief__pic{position:relative;margin:0;aspect-ratio:4/5;border-radius:var(--radius);overflow:hidden;background:#1d2027}
+.au-chief__pic img{width:100%;height:100%;object-fit:cover;object-position:50% 12%}
+.au-chief__pic figcaption{position:absolute;left:18px;bottom:18px;display:flex;align-items:center;gap:12px;padding:12px 18px 12px 14px;border-radius:16px;background:rgba(15,17,21,.72);backdrop-filter:blur(8px);color:#fff}
+.au-chief__pic figcaption b{font:600 44px/1 var(--display);letter-spacing:-.04em;color:#a9c1e3}
+.au-chief__pic figcaption span{font-size:13px;line-height:1.3;color:#dfe4ec}
+.au-chief__name{margin:10px 0 12px;font:500 var(--fs-4)/1.05 var(--display);letter-spacing:-.035em;color:#fff}
+.au-chief__role{margin:0 0 28px;color:#b9c3d1;font-size:var(--fs-0)}
+.au-chief__quote{position:relative;margin:0 0 32px;padding:0 0 0 22px;border-left:2px solid #2b4c7e}
+.au-chief__quote p{margin:0;font:400 var(--fs-1)/1.4 var(--display);letter-spacing:-.01em;color:#f2f5f9}
+.au-ask--inline{position:static;display:inline-block;margin-top:12px}
+.au-chief__rules{list-style:none;counter-reset:r;margin:0 0 30px;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.au-chief__rules li{counter-increment:r;padding-top:16px;border-top:1px solid rgba(169,193,227,.25)}
+.au-chief__rules li:before{content:"0" counter(r);display:block;margin-bottom:10px;font:600 12px/1 var(--body);letter-spacing:.14em;color:#a9c1e3}
+.au-chief__rules b{display:block;margin-bottom:6px;font:600 17px/1.25 var(--display);color:#fff}
+.au-chief__rules span{font-size:14px;line-height:1.45;color:#b9c3d1}
+.au-chief__fmt{margin:0 0 30px}
+.au-chief .au-incl__t{color:#a9c1e3}
+.au-chief__fmt ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.au-chief__fmt li{padding:9px 14px;border:1px solid rgba(169,193,227,.28);border-radius:999px;font-size:14px;color:#dfe4ec}
+.au-chief .btn{--bg:#2b4c7e;--fg:#fff;background:#2b4c7e;color:#fff}
+@media (max-width:900px){.au-chief__in{grid-template-columns:1fr}.au-chief__pic{max-width:420px}.au-chief__rules{grid-template-columns:1fr}}

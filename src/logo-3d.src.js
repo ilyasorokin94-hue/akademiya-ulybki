@@ -1,11 +1,11 @@
-// Объёмная «А» из логотипа: первая буква слова «Академии» в заголовке первого экрана.
-// Чёрный глянцевый акрил, как знак на стене клиники; плавно покачивается и следует за курсором.
+// Объёмная «А» из логотипа справа на первом экране: чёрный глянцевый акрил,
+// как знак на стене клиники. Медленно вращается и чуть следует за курсором.
 import * as THREE from 'three';
 import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 
 (function () {
-  var box = document.querySelector('.hv__a'), data = document.getElementById('logo-a');
+  var box = document.querySelector('.hx--a'), data = document.getElementById('logo-a');
   if (!box || !data) return;
   try {
     var c = document.createElement('canvas');
@@ -52,7 +52,7 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
     var cv = renderer.domElement, w = cv.clientWidth, h = cv.clientHeight; if (!w || !h) return;
     renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
     var dist = camera.position.z, vh = 2 * dist * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
-    var k = Math.min((vh * 0.98) / size.y, (vh * camera.aspect * 0.95) / size.x);
+    var k = Math.min((vh * 0.82) / size.y, (vh * camera.aspect * 0.8) / size.x);
     group.scale.setScalar(k);
   }
   fit(); addEventListener('resize', fit);
@@ -61,7 +61,7 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
   addEventListener('pointermove', function (e) { mx = (e.clientX / innerWidth) * 2 - 1; my = (e.clientY / innerHeight) * 2 - 1; }, { passive: true });
   var visible = true;
   new IntersectionObserver(function (en) { visible = en[0].isIntersecting; }).observe(box);
-  var clock = new THREE.Clock(), intro = 0;
+  var clock = new THREE.Clock(), intro = 0, angle = -0.5;
   function tick() {
     requestAnimationFrame(tick);
     if (!visible) return;
@@ -69,9 +69,9 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
     intro = Math.min(1, intro + dt * 0.6);
     tx += (mx - tx) * 0.05; ty += (my - ty) * 0.05;
     var e = 1 - Math.pow(1 - intro, 3);
-    var t = clock.elapsedTime;
-    group.rotation.y = (reduce ? 0 : Math.sin(t * 0.7) * 0.55) + tx * 0.3 + (1 - e) * 1.6;
-    group.rotation.x = 0.05 + ty * 0.1;
+    angle += dt * (reduce ? 0 : 0.4);
+    group.rotation.y = angle + tx * 0.3;
+    group.rotation.x = 0.06 + ty * 0.1 + (1 - e) * 0.4;
     renderer.render(scene, camera);
   }
   tick();

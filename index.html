@@ -122,7 +122,7 @@ window.umLogo=function(i){var f=i.getAttribute("data-fb");if(f){i.removeAttribut
   </div><div class="wrap cta-strip"><p>Консультация, план лечения и снимок бесплатно. Ни к чему не обязывает.</p><a class="btn btn--light btn--lg" href="zapis" data-modal="book" data-magnet>Записаться на бесплатную консультацию</a></div></div></div>
 </section>
 
-<section class="section au-chief on-dark" id="chief" data-v="1" aria-labelledby="ch-title"><div class="wrap au-chief__in">
+<section class="section au-chief" id="chief" data-v="4" aria-labelledby="ch-title"><div class="wrap au-chief__in">
   <span class="au-chief__big" aria-hidden="true">35</span>
   <figure class="au-chief__pic" data-reveal><img src="images/doctors/lazarev.webp?v=2" alt="Лазарев Виктор Викторович, главный врач" loading="lazy" decoding="async" onerror="umImg(this)"><figcaption><b>35</b><span>лет практики<br>с 1991 года</span></figcaption></figure>
   <div class="au-chief__body">
@@ -446,10 +446,5 @@ window.umLogo=function(i){var f=i.getAttribute("data-fb");if(f){i.removeAttribut
 </div></div>
 </div>
 <script src="assets/rvm.js?v=8686533e" async></script>
-<div class="au-vp" role="group" aria-label="Варианты оформления (демо)"><b>Варианты</b>
-<span>Главный врач</span><span class="au-vp__g" data-t="chief"><button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button><button data-v="4">4</button></span>
-<span>Врачи</span><span class="au-vp__g" data-t="team"><button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button><button data-v="4">4</button></span></div>
-<script>(function(){var K="au-v-";function set(t,v,go){var el=document.getElementById(t);if(!el)return;el.setAttribute("data-v",v);document.querySelectorAll('.au-vp__g[data-t="'+t+'"] button').forEach(function(b){b.classList.toggle("on",b.getAttribute("data-v")==v)});try{localStorage.setItem(K+t,v)}catch(e){}if(go)el.scrollIntoView({behavior:"smooth"});if(window.ScrollTrigger)ScrollTrigger.refresh()}
-document.querySelectorAll(".au-vp__g").forEach(function(g){var t=g.getAttribute("data-t"),v="1";try{v=localStorage.getItem(K+t)||"1"}catch(e){}set(t,v);g.addEventListener("click",function(e){var b=e.target.closest("button");if(b)set(t,b.getAttribute("data-v"),true)})})})();</script>
 </body>
 </html>

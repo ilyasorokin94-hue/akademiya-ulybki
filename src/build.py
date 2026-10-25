@@ -260,7 +260,7 @@ CHIEF_FMT = ['Протезирование всей челюсти на импл
 CHIEF_RULES = [('Сначала план', 'Диагностика и снимок до лечения. Пациент заранее знает каждый этап.'),
                ('Под увеличением', 'Микроскоп и бинокуляры на каждом приёме, а не по особому случаю.'),
                ('Сложное решаем сами', 'От одного импланта до протеза всей челюсти, без пересылок по клиникам.')]
-CHIEF = f'''<section class="section au-chief on-dark" id="chief" data-v="1" aria-labelledby="ch-title"><div class="wrap au-chief__in">
+CHIEF = f'''<section class="section au-chief" id="chief" data-v="4" aria-labelledby="ch-title"><div class="wrap au-chief__in">
   <span class="au-chief__big" aria-hidden="true">35</span>
   <figure class="au-chief__pic" data-reveal>{img("images/doctors/lazarev.webp?v=2", "Лазарев Виктор Викторович, главный врач")}<figcaption><b>35</b><span>лет практики<br>с 1991 года</span></figcaption></figure>
   <div class="au-chief__body">
@@ -547,12 +547,11 @@ s = s.replace('Вайтис', 'Академия улыбки').replace('White Te
 
 # ---------- демо-переключатель вариантов (убрать после выбора) ----------
 VPANEL = """<div class="au-vp" role="group" aria-label="Варианты оформления (демо)"><b>Варианты</b>
-<span>Главный врач</span><span class="au-vp__g" data-t="chief"><button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button><button data-v="4">4</button></span>
 <span>Врачи</span><span class="au-vp__g" data-t="team"><button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button><button data-v="4">4</button></span></div>
 <script>(function(){var K="au-v-";function set(t,v,go){var el=document.getElementById(t);if(!el)return;el.setAttribute("data-v",v);document.querySelectorAll('.au-vp__g[data-t="'+t+'"] button').forEach(function(b){b.classList.toggle("on",b.getAttribute("data-v")==v)});try{localStorage.setItem(K+t,v)}catch(e){}if(go)el.scrollIntoView({behavior:"smooth"});if(window.ScrollTrigger)ScrollTrigger.refresh()}
 document.querySelectorAll(".au-vp__g").forEach(function(g){var t=g.getAttribute("data-t"),v="1";try{v=localStorage.getItem(K+t)||"1"}catch(e){}set(t,v);g.addEventListener("click",function(e){var b=e.target.closest("button");if(b)set(t,b.getAttribute("data-v"),true)})})})();</script>
 """
-s = s.replace('</body>', VPANEL + '</body>', 1)
+# s = s.replace('</body>', VPANEL + '</body>', 1)  # демо-панель отключена: варианты выбраны
 open(os.path.join(ROOT, 'index.html'), 'w', encoding='utf-8').write(s)
 left = [w for w in ['Одинцов', 'Одинбург', 'Северная', 'Гвиниашвили', 'Чилингарян', 'Казарян', 'wtdent', '79037977688', 'Смирнов', 'Ткачук'] if w in s]
 print('OK', len(s), 'leftovers:', left)

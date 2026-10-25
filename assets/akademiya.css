@@ -94,6 +94,7 @@ html:not(.js-anim) .pl{display:none}
 
 /* акции без цен: вместо суммы короткий тезис, шрифт меньше */
 .pr-price b{font-size:clamp(30px,2.8vw,48px);line-height:1.1}
+body .pr4-card .pr-price b{font-size:clamp(30px,3.6vw,64px);line-height:1.05;white-space:normal;max-width:100%;overflow-wrap:break-word}
 
 /* первый экран: заголовок, строка со сменой данных и кнопка идут столбцом, без наложений */
 @media (min-width:761px){
@@ -184,7 +185,7 @@ html:not(.js-anim) .pl{display:none}
 @media (min-width:761px){
   .team__grid.au-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(18px,2.2vw,36px);align-items:start;overflow:visible}
   .au-row .doc{padding:0!important;margin:0!important;transform:none!important}
-  .au-row .doc__photo{aspect-ratio:1/1;border-radius:var(--radius)}
+  .au-row .doc__photo{aspect-ratio:1/1;border-radius:0}
   .au-row .doc__photo img{object-position:50% 14%}
   .au-row .doc h3{font-size:clamp(20px,1.6vw,26px);margin:0 0 2px}
   .au-row .doc--chief .doc__photo:before{content:"Главный врач";position:absolute;z-index:3;left:14px;top:14px;padding:7px 12px;border-radius:999px;background:#2b4c7e;color:#fff;font:600 12px/1 var(--body);letter-spacing:.06em;text-transform:uppercase}
@@ -211,7 +212,7 @@ html:not(.js-anim) .pl{display:none}
 }
 
 @media (max-width:760px){
-  .au-row .doc__photo{aspect-ratio:1/1;border-radius:var(--radius)}
+  .au-row .doc__photo{aspect-ratio:1/1;border-radius:0}
   .au-team[data-v="3"] .au-row .doc__photo{border-radius:50%}
   .au-row .doc--chief .doc__photo:before{content:"Главный врач";position:absolute;z-index:3;left:10px;top:10px;padding:6px 10px;border-radius:999px;background:#2b4c7e;color:#fff;font:600 10px/1 var(--body);letter-spacing:.06em;text-transform:uppercase}
   .au-team[data-v="3"] .au-row .doc--chief .doc__photo:before{display:none}

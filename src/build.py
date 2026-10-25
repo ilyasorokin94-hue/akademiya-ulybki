@@ -30,14 +30,16 @@ def block(start, end_tag, new, src=None):
 # Кадры, которые нужно согласовать с клиникой: на сайте у них плашка «уточнить»
 ASK = {
     'images/doctors/lazarev.webp': 'Фото из прошлой клиники, уточнить',
-    'images/doctors/gerasimova.webp': 'Уточнить, кто на фото',
     'images/real/old-mikroskop.webp': 'Прошлая клиника, уточнить',
     'images/real/old-modeli.webp': 'Прошлая клиника, уточнить',
     'images/real/old-implant.webp': 'Прошлая клиника, уточнить',
+    'images/real/old-vrach.webp': 'Прошлая клиника, уточнить',
 }
 
 
 def img(path, alt='', cls='', style='', extra=''):
+    if not path:
+        return ''
     a = f'<img src="{path}" alt="{html.escape(alt)}" loading="lazy" decoding="async" onerror="umImg(this)"'
     if cls: a += f' class="{cls}"'
     if style: a += f' style="{style}"'
@@ -61,7 +63,7 @@ head = head.replace('<meta name="theme-color" content="#ffffff">',
                     f'<meta property="og:type" content="website">\n<meta property="og:title" content="{TITLE}">\n<meta property="og:description" content="{DESC}">\n<meta property="og:locale" content="ru_RU">\n<meta name="theme-color" content="#15171c">')
 head = re.sub(r'<link rel="apple-touch-icon"[^>]*>\n', '', head)
 head = head.replace('<link rel="stylesheet" href="assets/styles.css?v=d847b31c">',
-                    '<link rel="stylesheet" href="assets/styles.css?v=au1">\n<link rel="stylesheet" href="assets/akademiya.css?v=au2">')
+                    '<link rel="stylesheet" href="assets/styles.css?v=au2">\n<link rel="stylesheet" href="assets/akademiya.css?v=au3">')
 # свой прелоадер вместо интро Вайтис: js-intro не ставим, держим страницу под заставкой
 head = head.replace('if(d.dataset.page==="home"&&!sessionStorage.getItem("um2-intro"))d.classList.add("js-intro")',
                     'd.classList.add("au-loading")')
@@ -76,6 +78,7 @@ head = head.replace('</script>\n<script src="assets/vendor/gsap.min.js"',
 head += '<script type="application/ld+json">' + json.dumps(LD, ensure_ascii=False) + '</script>\n'
 head = head.replace('<script src="assets/cookie.js?v=886e3f70" data-privacy="privacy/" data-ym="" defer></script>',
                     '<script src="assets/cookie.js?v=886e3f70" data-privacy="#" data-ym="" defer></script>')
+head = re.sub(r'<script src="assets/hero-3d.js[^"]*" defer></script>\n', '<script src="assets/logo-3d.js?v=au1" defer></script>\n', head)
 head = head.replace('<script src="assets/app.js?v=9b97a404" defer></script>', '<script src="assets/preloader.js?v=au1" defer></script>\n<script src="assets/app.js?v=au1" defer></script>')
 s = head + s[head_end:]
 
@@ -93,7 +96,7 @@ PRELOADER = f'''<div class="pl" id="pl" aria-hidden="true">
   <svg class="pl__logo" viewBox="190 30 540 670">
     <defs>
       <clipPath id="pl-clip-a"><path d="{logo["a"]}"/></clipPath>
-      <linearGradient id="pl-gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e2b8"/><stop offset=".5" stop-color="#c9a96e"/><stop offset="1" stop-color="#8f6d3e"/></linearGradient>
+      <linearGradient id="pl-gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dbe7f7"/><stop offset=".5" stop-color="#7d9cc9"/><stop offset="1" stop-color="#1d3557"/></linearGradient>
     </defs>
     <g class="pl__shards" clip-path="url(#pl-clip-a)"></g>
     <g class="pl__mark">{segs}</g>
@@ -125,14 +128,18 @@ def rot(lines):
 ROT = [['Лечим', 'под микроскопом', 'и бинокулярами.'],
        ['Рязань,', 'ул. Попова, 4а,', 'с 9:00', 'до 21:00.'],
        ['Консультация,', 'план лечения', 'и снимок', 'бесплатно.']]
-HERO = f'''<section class="hero hero--v hero--v1 on-dark" aria-labelledby="h1"><div class="wrap hero__in">
+LOGO_A = json.dumps({k: logo[k] for k in ('cap', 'a', 'thin', 'sw')})
+HERO = f'''<section class="hero hero--v hero--v1" aria-labelledby="h1"><div class="hx--a" aria-hidden="true"></div><script type="application/json" id="logo-a">{LOGO_A}</script><div class="wrap hero__in">
   <div class="hero__text">
-    <h1 id="h1"><span data-split>Улыбка —</span> <span class="hv__l2" data-split>наш главный предмет.</span></h1>
+    <h1 id="h1"><span data-split>Ваша улыбка</span> <span class="hv__l2" data-split>главный предмет Академии.</span></h1>
     <p class="hv__rot"><span class="sr">Лечим под микроскопом и бинокулярами. Рязань, ул. Попова, 4а, ежедневно с 9:00 до 21:00. Консультация, план лечения и снимок бесплатно.</span>{rot(ROT)}</p>
     <div class="hero__actions"><a class="btn btn--lg" href="zapis" data-modal="book" data-magnet>Записаться на бесплатную консультацию</a></div>
   </div>
 </div></section>'''
 block('<section class="hero hero--v', '</section>', HERO)
+# зуб Вайтис и переключатель его вариантов убираем
+s = re.sub(r'<div class="hx hx--tooth".*?</div>\n', '', s, count=1)
+s = re.sub(r'<div class="hx-switch".*?</div>\n', '', s, count=1)
 
 # ---------- врачи ----------
 DOCS = [
@@ -147,7 +154,9 @@ DOCS = [
          tags='gigiena estetika', chief=False),
 ]
 def doc_photo(d):
-    return f'images/doctors/{d["slug"]}.webp'
+    # фото Герасимовой пока нет: в карточке остаются инициалы
+    return f'images/doctors/{d["slug"]}.webp' if d['slug'] != 'gerasimova' else ''
+
 
 trio = ''.join(f'<li><a href="#team" aria-label="{d["short"]}: {d["name"]} {d["fam"]}"><span class="hero__face" data-ph><span class="doc__initials" aria-hidden="true">{d["ini"]}</span>{img(doc_photo(d), d["name"] + " " + d["fam"])}</span><b>{d["short"]}</b><span>{d["name"]}<br>{d["fam"]}</span></a></li>' for d in DOCS)
 SLOGAN_T = 'Учим улыбаться заново.'
@@ -186,7 +195,7 @@ def pfig(p, alt, r, par=False):
     return f'<figure class="ptour__fig"{" data-par" if par else ""} style="--r:{r}"><span class="ptour__pic">{img(p, alt)}</span><figcaption>{alt}</figcaption></figure>'
 TOUR = f'''<section class="tour on-dark" id="clinic" aria-labelledby="tr-title">
   <div class="tour__pin">
-    <div class="tour__frame">{img("images/real/holl.webp", "Холл «Академии улыбки»", style="object-position:50% 60%")}</div>
+    <div class="tour__frame">{img("images/real/old-vrach.webp", "Виктор Викторович Лазарев на приёме", style="object-position:60% 40%")}</div>
     <div class="tour__title wrap"><span class="label label--light">Клиника</span><h2 id="tr-title" data-split>Здесь учат улыбаться</h2><p>{TOUR_P}</p><a class="btn btn--light" href="{ROUTE}" target="_blank" rel="noopener">Построить маршрут</a></div>
   </div>
   <p class="tour__lead wrap">{TOUR_P}</p>
@@ -197,7 +206,7 @@ TOUR = f'''<section class="tour on-dark" id="clinic" aria-labelledby="tr-title">
     <div class="ptour__car"><div class="ptour__items">
       <div class="ptour__item ptour__item--empty"></div>
       {pwin("images/real/fasad-vecher-2.webp", "Здание клиники", "3 / 4", .1, .6, "50% 40%")}{pwin("images/real/kabinet-3.webp", "Лечебный кабинет", "1 / 1", .1, .6, "50% 50%")}{pwin("images/real/holl-2.webp", "Холл", "3 / 2", .2, .7, "45% 60%", " ptour__item--left")}
-      <div class="ptour__item ptour__item--main">{img("images/real/holl.webp", "Холл «Академии улыбки»", "ptour__img")}<span class="ptour__shade"></span>
+      <div class="ptour__item ptour__item--main">{img("images/real/old-vrach.webp", "Виктор Викторович Лазарев на приёме", "ptour__img", "object-position:60% 40%")}<span class="ptour__shade"></span>
         <div class="ptour__slogan"><span class="label label--light"><span class="w" style="--i:0">Клиника</span></span><h2 class="ptour__title"><span class="w" style="--i:1">Здесь</span> <span class="w" style="--i:2">учат</span> <span class="w" style="--i:3">улыбаться</span></h2></div></div>
       <div class="ptour__item ptour__item--right">{img("images/real/elina-kabinet.webp", "Элина Вячеславовна в кабинете", "ptour__img", "object-position:50% 40%")}<p class="ptour__cap" aria-hidden="true">Кабинет терапевта</p></div>
     </div></div>
@@ -216,7 +225,7 @@ FEAT = [
     ('100%', 'лечения под увеличением', 'Микроскоп и бинокуляры на каждом приёме: врач видит каждый канал и трещину.'),
     ('35', 'лет стажа у ортопеда', 'Виктор Викторович Лазарев ведёт All-on-4, виниры и коронки из циркония.'),
     ('0 ₽', 'консультация всех врачей', 'План лечения и прицельный снимок зуба бесплатно.'),
-    ('9–21', 'без выходных', 'Ежедневно с 9:00 до 21:00. Своя парковка у входа.'),
+    ('7/7', 'без выходных', 'Ежедневно с 9:00 до 21:00. Своя парковка у входа.'),
 ]
 feat = ''.join(f'<article class="fcard"><div class="fcard__body"><b class="fcard__big">{a}</b><h3>{b}</h3><p>{c}</p></div></article>' for a, b, c in FEAT)
 FOIL = f'''<section class="foil on-dark" id="path" aria-labelledby="ph-title">
@@ -234,7 +243,7 @@ SV = [
     ('lechenie-zubov', 'Лечение под микроскопом', ['Кариес от 5 000 ₽', 'Пульпит от 11 000 ₽', 'Перелечивание каналов'], ''),
     ('detskaya', 'Детская стоматология', ['Лечение молочного зуба 4 500 ₽', 'Удаление молочного зуба 1 500 ₽', 'Детская чистка 3 500 ₽'], ''),
     ('protezirovanie', 'Коронки и протезы', ['Коронки из диоксида циркония', 'Керамика и металлокерамика', 'Съёмные и несъёмные протезы'], ''),
-    ('estetika', 'Виниры и реставрация', ['Виниры от 35 000 ₽', 'Реставрация 5 500–7 700 ₽', 'Отбеливание'], ''),
+    ('estetika', 'Виниры и реставрация', ['Виниры от 35 000 ₽', 'Реставрация от 5 500 ₽', 'Отбеливание'], ''),
 ]
 cards = ''.join(f'''
     <a class="svl-card" href="#prices" style="--delay:{i * .3:.1f}s">
@@ -257,9 +266,16 @@ block('<section class="section section--sage svs"', '</section>', SERV)
 # ---------- АКЦИИ ----------
 PR = [
     ('real/old-mikroskop', 'Виктор Викторович лечит под бинокулярами', 'Бесплатно', 'Консультация и снимок', '0 ₽', 'Осмотр любого врача, план лечения с ценой и прицельный снимок зуба', 'Записаться бесплатно', 'бесплатная консультация и снимок'),
-    ('real/old-implant', 'Имплантационный набор', 'Имплантация', 'Имплант под ключ', '63 900 ₽', 'Имплант и коронка по одной цене. Ведёт ортопед-хирург со стажем 35 лет', 'Записаться на консультацию', 'имплант под ключ 63 900 ₽'),
-    ('tp/kost', 'Модель челюсти с имплантами', 'Все зубы за раз', 'All-on-4', 'от 300 000 ₽', 'Несъёмный протез на 4 имплантах. Из диоксида циркония 450 000 ₽', 'Узнать подробнее', 'All-on-4 от 300 000 ₽'),
+    ('uslugi/implantaciya', 'Имплант с коронкой', 'Имплантация', 'Имплант под ключ', '63 900 ₽', 'Имплант и коронка по одной цене. Ведёт ортопед-хирург со стажем 35 лет', 'Записаться на консультацию', 'имплант под ключ 63 900 ₽'),
+    ('tp/kost', 'Модель челюсти с имплантами', 'Все зубы за раз', 'All-on-4', 'от 300 000 ₽', 'Вся челюсть на 4 имплантах за одну операцию. Металлокерамика от 300 000 до 350 000 ₽, диоксид циркония 450 000 ₽', 'Узнать подробнее', 'All-on-4 от 300 000 ₽'),
     ('akcii/kids-gift', 'Мальчик с подарком в кабинете', 'Детям', 'Без слёз и страха', '4 500 ₽', 'Лечение молочного зуба. Врач договаривается с ребёнком, а не торопит', 'Записать ребёнка', 'детский приём'),
+]
+# Из чего складывается цена: пациент видит, за что платит
+INCL = [
+    [('Осмотр врача', '0 ₽'), ('Прицельный снимок зуба', '0 ₽'), ('План лечения с ценой каждого этапа', '0 ₽')],
+    [('Установка импланта', '29 000 ₽'), ('Формирователь десны и абатмент', '4 900 ₽'), ('Коронка на имплант', '30 000 ₽')],
+    [('Снимки и план операции', 'входит'), ('4 импланта с установкой', 'входит'), ('Несъёмный протез на 12 зубов', 'входит'), ('Примерки, фиксация, контроль', 'входит')],
+    [('Анестезия', 'входит'), ('Лечение кариеса', 'входит'), ('Пломба', 'входит')],
 ]
 pr = ''.join(f'''<article class="pr4-card" style="--i:{i}">
     <span class="pr4-card__pic">{img(f"images/{p}.webp", alt)}</span>
@@ -268,12 +284,13 @@ pr = ''.join(f'''<article class="pr4-card" style="--i:{i}">
       <h3 class="pr-title">{t}</h3>
       <p class="pr-price"><b>{price}</b></p>
       <p class="pr-gift">{gift}</p>
+      <div class="au-incl"><p class="au-incl__t">Из чего складывается цена</p><ul>{''.join(f'<li><span>{a}</span><i aria-hidden="true"></i><b>{b}</b></li>' for a, b in INCL[i])}</ul></div>
       <a class="btn btn--lg" href="zapis" data-modal="book" data-promo="{promo}">{btn}</a>
     </div>
   </article>''' for i, (p, alt, tag, t, price, gift, btn, promo) in enumerate(PR))
 AL = [('Консультация', 'Осмотр, план лечения и снимок зуба', '0 ₽'), ('Прицельный снимок', 'Если нужен отдельно', '350 ₽'),
       ('Рассрочка', 'Лечение можно оплатить частями', 'Частями'), ('Подарочный сертификат', 'Здоровая улыбка в подарок близким', 'Подарок'),
-      ('Парковка', 'Своя, есть места для людей с инвалидностью', 'Бесплатно'), ('Без выходных', 'Ежедневно с 9:00 до 21:00', '9–21')]
+      ('Парковка', 'Своя, есть места для людей с инвалидностью', 'Бесплатно'), ('Без выходных', 'Ежедневно с 9:00 до 21:00', '7/7')]
 alv = ''.join(f'<li data-reveal><span class="alv4__l"><span class="alv__t">{a}</span><span class="alv__d">{b}</span></span><i aria-hidden="true"></i><b class="alv__n">{c}</b></li>' for a, b, c in AL)
 alp = ''.join(f'<li data-reveal><b>{a} <em class="pr-al__n">{c}</em></b><span>{b}</span></li>' for a, b, c in AL)
 AKCII = f'''<section class="section pr on-dark" id="akcii" aria-labelledby="pr-title"><div class="wrap">
@@ -286,11 +303,11 @@ block('<section class="section pr on-dark"', '</div></section>', AKCII)
 # ---------- ПРАЙС (секция в стиле FAQ-аккордеона, ставим перед врачами) ----------
 PRICE = [
     ('Диагностика', [('Консультация любого врача с планом лечения', 'Бесплатно'), ('Прицельный снимок зуба', '350 ₽')]),
-    ('Лечение зубов', [('Поверхностный кариес', '5 000 ₽'), ('Средний кариес', '5 500 ₽'), ('Глубокий кариес', '6 500 ₽'), ('Эстетическая реставрация зуба', '5 500 – 7 700 ₽'),
+    ('Лечение зубов', [('Поверхностный кариес', '5 000 ₽'), ('Средний кариес', '5 500 ₽'), ('Глубокий кариес', '6 500 ₽'), ('Эстетическая реставрация зуба', 'от 5 500 до 7 700 ₽'),
                        ('Пульпит, 1 канал', '11 000 ₽'), ('Пульпит, 2 канала', '16 500 ₽'), ('Пульпит, 3 канала', '22 000 ₽'), ('Пульпит, 4 канала', '27 500 ₽'), ('Лечение периодонтита и кисты', 'от 16 000 ₽')]),
     ('Гигиена', [('Профессиональная гигиена (ультразвук + Air Flow)', '4 500 ₽'), ('Гигиена при пародонтозе', '5 500 ₽'), ('Герметизация фиссур', '4 500 ₽')]),
     ('Протезирование', [('Коронка на зуб', '18 000 ₽'), ('Коронка на имплант', '30 000 ₽'), ('Виниры', 'от 35 000 ₽'), ('Съёмный протез', 'от 20 000 ₽'),
-                        ('All-on-4, металлокерамика', '300 000 – 350 000 ₽'), ('All-on-4, диоксид циркония', '450 000 ₽'), ('All-on-6', '330 000 ₽')]),
+                        ('All-on-4, металлокерамика', 'от 300 000 до 350 000 ₽'), ('All-on-4, диоксид циркония', '450 000 ₽'), ('All-on-6', '330 000 ₽')]),
     ('Имплантация и хирургия', [('Имплантация под ключ (имплант + коронка)', '63 900 ₽'), ('Установка импланта', '29 000 ₽'), ('Синус-лифтинг', 'от 13 000 ₽'),
                                 ('Простое удаление зуба', '2 110 ₽'), ('Сложное удаление зуба', '3 660 ₽'), ('Удаление зуба мудрости', '8 650 ₽')]),
     ('Детям', [('Лечение молочного зуба', '4 500 ₽'), ('Удаление молочного зуба', '1 500 ₽'), ('Профессиональная чистка зубов', '3 500 ₽')]),
@@ -344,7 +361,7 @@ def rvrow(items, d):
     return f'<div class="rv__row" data-dir="{d}">{one}{one}{hid}{hid}</div>'
 tones = ['ink', 'green', 'sage', 'white', 'ink', 'green', 'sage']
 REV = f'''<section class="section reviews" id="reviews" aria-labelledby="rv-title">
-  <div class="wrap section__head"><div><span class="label">Отзывы</span><h2 id="rv-title" data-split>113 оценок, и почти все — пятёрки</h2></div></div>
+  <div class="wrap section__head"><div><span class="label">Отзывы</span><h2 id="rv-title" data-split>113 оценок, и почти все на пятёрку</h2></div></div>
   <div class="wrap"><div class="rt" aria-label="Оценки клиники на площадках" data-reveal>
     <div class="rt-avg">
       <div class="rt-avg__num" data-count="5,0">5,0</div>
@@ -364,7 +381,7 @@ REV = f'''<section class="section reviews" id="reviews" aria-labelledby="rv-titl
     </div>
     <div class="rt-pd au-rt-quote">
       <div class="rt-pd__text">
-        <p class="rt-pd__quote">«Основная причина моего выбора — профессионализм врача Лазаревой Элины Вячеславовны.»</p>
+        <p class="rt-pd__quote">«Основная причина моего выбора: профессионализм врача Лазаревой Элины Вячеславовны.»</p>
         <a class="link rt-pd__link" href="{GIS}/tab/reviews" target="_blank" rel="noopener">Екатерина К., отзыв в 2ГИС</a>
       </div>
     </div>
@@ -396,7 +413,7 @@ FAQ = [
         ('Ребёнок боится. Что делать?', 'Скажите об этом при записи. Элина Вячеславовна лечит и детей, и взрослых: не торопит, объясняет и договаривается с ребёнком.'),
         ('Нужно ли лечить молочные зубы?', 'Да. Кариес молочного зуба переходит на соседние и на зачаток постоянного. Лечение молочного зуба 4 500 ₽.')]),
     ('Импланты и протезы', [
-        ('Что такое All-on-4?', 'Несъёмный протез всей челюсти на четырёх имплантах. Подходит, когда зубов почти не осталось. Металлокерамика 300 000–350 000 ₽, диоксид циркония 450 000 ₽.'),
+        ('Что такое All-on-4?', 'Несъёмный протез всей челюсти на четырёх имплантах. Подходит, когда зубов почти не осталось. Металлокерамика от 300 000 до 350 000 ₽, диоксид циркония 450 000 ₽.'),
         ('Какую коронку выбрать?', 'Чаще всего из диоксида циркония: выглядит естественно и выдерживает жевательную нагрузку. Врач подскажет на консультации.'),
         ('Кто ставит импланты и протезы?', 'Виктор Викторович Лазарев, ортопед и хирург со стажем 35 лет. Он ведёт лечение от плана до готовых зубов.')]),
     ('Запись и визит', [

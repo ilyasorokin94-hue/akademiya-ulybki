@@ -88,7 +88,7 @@ html.au-loading .hero [data-split]{visibility:visible}
 .pr .on-dark .au-incl__t,.pr4-card:nth-child(3) .au-incl__t{color:#a9c1e3}
 .au-incl ul{list-style:none;margin:0;padding:0}
 .au-incl li{display:flex;align-items:baseline;gap:10px;padding:7px 0;border-bottom:1px solid currentColor;border-color:rgba(127,135,150,.25);font-size:15px;line-height:1.3}
-.au-incl li i{flex:1;border-bottom:1px dotted rgba(127,135,150,.45);transform:translateY(-3px)}
+.au-incl li i{flex:1}
 .au-incl li b{font-weight:600;white-space:nowrap}
 
 /* инициалы лежат под фото и видны, только если фото нет */
@@ -343,3 +343,31 @@ body .pr4-card .pr-price b{font-size:clamp(30px,3.6vw,64px);line-height:1.05;whi
   }
 }
 @keyframes au-pt-slogan{0%{opacity:1}11%{opacity:0}88%{opacity:0}100%{opacity:1}}
+/* «Специализация» главного врача на компьютере: 5 вариантов вместо плашек (переключатель внизу экрана) */
+@media (min-width:761px){
+  .au-vp{display:flex}
+  #spec[data-v] ul{display:grid;grid-template-columns:1fr 1fr;gap:0 32px;flex-wrap:nowrap}
+  #spec[data-v] li{border:0;border-radius:0;background:none;padding:0;color:#15171c;font-size:15px;line-height:1.4}
+  /* 1: список в две колонки с тонкими линиями */
+  #spec[data-v="1"] li{display:flex;gap:12px;align-items:baseline;padding:14px 0;border-bottom:1px solid rgba(43,76,126,.2)}
+  #spec[data-v="1"] li:nth-child(-n+2){border-top:1px solid rgba(43,76,126,.2)}
+  #spec[data-v="1"] li:before{content:"";flex:none;width:6px;height:6px;border-radius:50%;background:#2b4c7e;translate:0 -2px}
+  /* 2: белые карточки с синей полосой слева */
+  #spec[data-v="2"] ul{gap:10px}
+  #spec[data-v="2"] li{padding:16px 18px;background:#fff;border-left:3px solid #2b4c7e;box-shadow:0 10px 30px -22px rgba(21,23,28,.45)}
+  /* 3: четыре колонки с галочкой и вертикальными разделителями */
+  #spec[data-v="3"] ul{grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid rgba(43,76,126,.2);border-bottom:1px solid rgba(43,76,126,.2)}
+  #spec[data-v="3"] li{padding:18px 18px 20px;border-left:1px solid rgba(43,76,126,.2);font-size:14px}
+  #spec[data-v="3"] li:first-child{border-left:0;padding-left:0}
+  #spec[data-v="3"] li:before{content:"";display:block;width:30px;height:30px;margin-bottom:12px;border-radius:50%;background:#2b4c7e url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/16px no-repeat}
+  /* 4: тёмно-синяя панель */
+  #spec[data-v="4"]{padding:22px 26px 10px;background:#1d3557;border-radius:18px}
+  #spec[data-v="4"] .au-incl__t{color:#a9c1e3}
+  #spec[data-v="4"] ul{gap:0 36px}
+  #spec[data-v="4"] li{padding:14px 0;color:#fff;border-top:1px solid rgba(255,255,255,.14)}
+  #spec[data-v="4"] li:nth-child(-n+2){border-top:0}
+  /* 5: крупный текст с короткой синей чертой */
+  #spec[data-v="5"] ul{gap:16px 40px}
+  #spec[data-v="5"] li{display:grid;gap:10px;font:500 19px/1.3 var(--display);letter-spacing:-.015em}
+  #spec[data-v="5"] li:before{content:"";width:28px;height:2px;background:#2b4c7e}
+}

@@ -284,7 +284,7 @@ ROWS = ['Профессиональная гигиена и отбеливани
 rows = ''.join(f'\n    <a class="svl-row" href="zapis" data-modal="book" style="--delay:{i * .3:.1f}s"><h3 class="svl-row__title">{t}</h3><span class="svl-row__act"><span class="svl-go" aria-hidden="true">{ARROW}</span></span></a>' for i, t in enumerate(ROWS))
 # ---------- ГЛАВНЫЙ ВРАЧ ----------
 # Идеолог «Академии»: факты из открытых источников и от клиники; цитату согласовать с ним
-CHIEF_FMT = ['Все зубы на имплантах: All-on-4 и All-on-6', 'Имплантация и сложное удаление', 'Коронки и виниры из циркония и керамики', 'Лечение под ключ: от плана до готовых зубов']
+CHIEF_FMT = ['Все зубы на имплантах: All‑on‑4 и All‑on‑6', 'Имплантация и сложное удаление', 'Коронки и виниры из циркония и керамики', 'Лечение под ключ: от плана до готовых зубов']
 CHIEF_RULES = [('Сначала план', 'Диагностика и снимок до лечения. Пациент заранее знает каждый этап.'),
                ('Под увеличением', 'Микроскоп и бинокуляры на каждом приёме, а не по особому случаю.'),
                ('Сложное решаем сами', 'От одного импланта до протеза всей челюсти, без пересылок по клиникам.')]
@@ -297,7 +297,7 @@ CHIEF = f'''<section class="section au-chief" id="chief" data-v="4" aria-labelle
     <p class="au-chief__role">Стоматолог-ортопед и хирург, выпускник РязГМУ. Идеолог «Академии улыбки».</p>
     <blockquote class="au-chief__quote" data-reveal><p>«Академия для меня не вывеска. Врач учится всю жизнь, а пациент уходит не просто с вылеченным зубом, а с улыбкой, которую не стыдно показать.»</p></blockquote>
     <ol class="au-chief__rules">{''.join(f'<li data-reveal><b>{a}</b><span>{b}</span></li>' for a, b in CHIEF_RULES)}</ol>
-    <div class="au-chief__fmt"><p class="au-incl__t">Специализация</p><ul>{''.join(f'<li>{x}</li>' for x in CHIEF_FMT)}</ul></div>
+    <div class="au-chief__fmt" id="spec" data-v="1"><p class="au-incl__t">Специализация</p><ul>{''.join(f'<li>{x}</li>' for x in CHIEF_FMT)}</ul></div>
     <a class="btn btn--lg" href="zapis?doctor=lazarev" data-modal="book" data-doctor="lazarev">Записаться к главному врачу</a>
   </div>
 </div></section>
@@ -575,11 +575,11 @@ s = s.replace('Вайтис', 'Академия улыбки').replace('White Te
 
 # ---------- демо-переключатель вариантов (убрать после выбора) ----------
 VPANEL = """<div class="au-vp" role="group" aria-label="Варианты оформления (демо)"><b>Варианты</b>
-<span>Буква А</span><span class="au-vp__g" data-t="hx"><button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button></span><span>Выгодно</span><span class="au-vp__g" data-t="alw"><button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button></span></div>
-<script>(function(){var K="au-v-";function set(t,v,go){var el=document.getElementById(t);if(!el)return;el.setAttribute("data-v",v);document.querySelectorAll('.au-vp__g[data-t="'+t+'"] button').forEach(function(b){b.classList.toggle("on",b.getAttribute("data-v")==v)});try{localStorage.setItem(K+t,v)}catch(e){}if(go)el.scrollIntoView({behavior:"smooth"});if(window.ScrollTrigger)ScrollTrigger.refresh()}
+<span>Специализация</span><span class="au-vp__g" data-t="spec"><button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button><button data-v="4">4</button><button data-v="5">5</button></span></div>
+<script>(function(){var K="au-v-";function set(t,v,go){var el=document.getElementById(t);if(!el)return;el.setAttribute("data-v",v);document.querySelectorAll('.au-vp__g[data-t="'+t+'"] button').forEach(function(b){b.classList.toggle("on",b.getAttribute("data-v")==v)});try{localStorage.setItem(K+t,v)}catch(e){}if(go)el.scrollIntoView({behavior:"smooth",block:"center"});if(window.ScrollTrigger)ScrollTrigger.refresh()}
 document.querySelectorAll(".au-vp__g").forEach(function(g){var t=g.getAttribute("data-t"),v="1";try{v=localStorage.getItem(K+t)||"1"}catch(e){}set(t,v);g.addEventListener("click",function(e){var b=e.target.closest("button");if(b)set(t,b.getAttribute("data-v"),true)})})})();</script>
 """
-# s = s.replace('</body>', VPANEL + '</body>', 1)  # демо-панель отключена: выбраны «А» 1 и «Выгодно всегда» 1
+s = s.replace('</body>', VPANEL + '</body>', 1)  # демо-панель на компьютере: «Специализация» главного врача
 # свои стили встраиваем в страницу: на один блокирующий запрос меньше
 s = s.replace('<link rel="stylesheet" href="assets/akademiya.css?v=au9">', '<style>' + re.sub(r'/\*.*?\*/', '', open(os.path.join(ROOT, 'assets/akademiya.css'), encoding='utf-8').read().replace('\n', '')) + '</style>')
 s = re.sub(r'href="zapis(\?doctor=\w+)?"', 'href="#contacts"', s)

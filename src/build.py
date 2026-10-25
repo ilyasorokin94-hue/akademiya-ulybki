@@ -104,10 +104,10 @@ head = head.replace('</script>\n<script src="assets/vendor/gsap.min.js"',
 head += '<script type="application/ld+json">' + json.dumps(LD, ensure_ascii=False) + '</script>\n'
 head = head.replace('<script src="assets/cookie.js?v=886e3f70" data-privacy="privacy/" data-ym="" defer></script>',
                     '<script src="assets/cookie.js?v=886e3f70" data-privacy="#" data-ym="" defer></script>')
-head = re.sub(r'<script src="assets/hero-3d.js[^"]*" defer></script>\n', '<script>if(matchMedia("(min-width: 761px)").matches)addEventListener("load",function(){var go=function(){var t=document.createElement("script");t.src="assets/logo-3d.js?v=au5";document.head.appendChild(t)};window.requestIdleCallback?requestIdleCallback(go,{timeout:1500}):setTimeout(go,300)})</script>\n', head)
+head = re.sub(r'<script src="assets/hero-3d.js[^"]*" defer></script>\n', '<script>addEventListener("load",function(){var go=function(){var t=document.createElement("script");t.src="assets/logo-3d.js?v=au6";document.head.appendChild(t)};window.requestIdleCallback?requestIdleCallback(go,{timeout:1500}):setTimeout(go,300)})</script>\n', head)
 # латиницу не грузим заранее: в заголовке первого экрана только кириллица
 head = re.sub(r'<link rel="preload" href="assets/fonts/[a-z-]+-latin\.woff2"[^>]*>\n', '', head)
-head = head.replace('<script src="assets/app.js?v=9b97a404" defer></script>', '<script src="assets/preloader.js?v=au2" defer></script>\n<script src="assets/app.js?v=au2" defer></script>')
+head = head.replace('<script src="assets/app.js?v=9b97a404" defer></script>', '<script src="assets/preloader.js?v=au3" defer></script>\n<script src="assets/app.js?v=au2" defer></script>')
 s = head + s[head_end:]
 
 # ---------- демо-плашка, прелоадер ----------
@@ -157,7 +157,7 @@ ROT = [['Микроскоп', 'и бинокуляры', 'на каждом пр
        ['Рязань,', 'ул. Попова, 4а,', 'с 9:00', 'до 21:00.'],
        ['Консультация,', 'план лечения', 'и снимок', 'бесплатно.']]
 LOGO_A = json.dumps({k: logo[k] for k in ('cap', 'a', 'thin', 'sw')})
-HERO = f'''<section class="hero hero--v hero--v1" aria-labelledby="h1"><div class="hx--a" aria-hidden="true"><svg class="hx__flat" viewBox="230 30 470 600" preserveAspectRatio="xMidYMid meet">{''.join(f'<path d="{logo[k]}"/>' for k in ('cap', 'a', 'thin', 'sw'))}</svg></div><script type="application/json" id="logo-a">{LOGO_A}</script><div class="wrap hero__in">
+HERO = f'''<section class="hero hero--v hero--v1" aria-labelledby="h1"><div class="hx--a" id="hx" data-v="1" aria-hidden="true"><svg class="hx__flat" viewBox="230 30 470 600" preserveAspectRatio="xMidYMid meet">{''.join(f'<path d="{logo[k]}"/>' for k in ('cap', 'a', 'thin', 'sw'))}</svg></div><script type="application/json" id="logo-a">{LOGO_A}</script><div class="wrap hero__in">
   <div class="hero__text">
     <h1 id="h1"><span data-split>Ваша улыбка</span> <span class="hv__l2" data-split>главный предмет Академии.</span></h1>
     <p class="hv__rot"><span class="sr">Микроскоп и бинокуляры на каждом приёме. Рязань, ул. Попова, 4а, ежедневно с 9:00 до 21:00. Консультация, план лечения и снимок бесплатно.</span>{rot(ROT)}</p>
@@ -220,6 +220,8 @@ def pwin(p, alt, ar, p0, p1, pos, cls=''):
     return f'<div class="ptour__item{cls}"><div class="ptour__win" style="--ar:{ar};--p0:{p0};--p1:{p1}"><span class="ptour__rail">{img(p, alt, "ptour__img", "object-position:" + pos)}</span></div><p class="ptour__cap" aria-hidden="true">{alt}</p></div>'
 def pfig(p, alt, r, par=False):
     return f'<figure class="ptour__fig"{" data-par" if par else ""} style="--r:{r}"><span class="ptour__pic">{img(p, alt)}</span><figcaption>{alt}</figcaption></figure>'
+def mfig(p, alt, cls=''):
+    return f'<figure class="mtour__fig{cls}" data-reveal>{img(p, alt)}</figure>'
 TOUR = f'''<section class="tour on-dark" id="clinic" aria-labelledby="tr-title">
   <div class="tour__pin">
     <div class="tour__frame">{img("images/real/kabinet-2.webp", "Лечебный кабинет «Академии улыбки»", style="object-position:50% 50%")}</div>
@@ -229,19 +231,11 @@ TOUR = f'''<section class="tour on-dark" id="clinic" aria-labelledby="tr-title">
   <div class="tour__rows" aria-label="Фото клиники">
     <div class="tour__row" data-dir="-1">{row1}</div><div class="tour__row" data-dir="1">{row2}</div>
   </div>
-  <div class="ptour">
-    <div class="ptour__car"><div class="ptour__items">
-      <div class="ptour__item ptour__item--empty"></div>
-      {pwin("images/real/fasad-vecher-2.webp", "Здание клиники", "3 / 4", .1, .6, "50% 40%")}{pwin("images/real/kabinet-3.webp", "Лечебный кабинет", "1 / 1", .1, .6, "50% 50%")}{pwin("images/real/holl-2.webp", "Холл", "3 / 2", .2, .7, "45% 60%", " ptour__item--left")}
-      <div class="ptour__item ptour__item--main">{img("images/real/kabinet-2.webp", "Лечебный кабинет «Академии улыбки»", "ptour__img", "object-position:50% 50%")}<span class="ptour__shade"></span>
-        <div class="ptour__slogan"><span class="label label--light"><span class="w" style="--i:0">Клиника</span></span><h2 class="ptour__title"><span class="w" style="--i:1">Здесь</span> <span class="w" style="--i:2">учат</span> <span class="w" style="--i:3">улыбаться</span></h2></div></div>
-      <div class="ptour__item ptour__item--right">{img("images/real/elina-kabinet.webp", "Элина Вячеславовна в кабинете", "ptour__img", "object-position:50% 40%")}<p class="ptour__cap" aria-hidden="true">Кабинет терапевта</p></div>
-    </div></div>
-    <div class="ptour__spacer"></div>
-    <div class="ptour__after">
-      <div class="ptour__grid">{pfig("images/real/fasad-noch-2.webp", "Вечером здание подсвечено", "410 / 628")}{pfig("images/real/kabinet-4.webp", "Лечебный кабинет", "1 / 1", True)}{pfig("images/real/logo-stena-3.webp", "Логотип у лестницы", "410 / 628")}{pfig("images/real/holl-3.webp", "Холл и ресепшен", "520 / 416", True)}{pfig("images/real/kabinet-2.webp", "Кабинет с видом на город", "520 / 362")}{pfig("images/real/old-mikroskop.webp", "Лечение под бинокулярами", "410 / 628", True)}</div>
-      <div class="ptour__text"><p>{TOUR_P}</p><a class="btn btn--light" href="{ROUTE}" target="_blank" rel="noopener">Построить маршрут</a></div>
-    </div>
+  <div class="mtour">
+    <div class="mtour__hero">{img("images/m/kabinet.webp", "Лечебный кабинет «Академии улыбки»", "mtour__bg")}<span class="mtour__shade"></span>
+      <div class="mtour__head"><span class="label label--light">Клиника</span><h2 class="mtour__title">Здесь учат улыбаться</h2></div></div>
+    <div class="mtour__grid">{mfig("images/m/fasad.webp", "Здание клиники на Попова, 4а")}{mfig("images/m/logo.webp", "Логотип «Академии улыбки» у лестницы")}{mfig("images/m/holl-wide.webp", "Холл и зона ожидания", " mtour__fig--wide")}{mfig("images/m/holl.webp", "Холл и ресепшен")}{mfig("images/m/lestnica.webp", "Лестница на второй этаж")}</div>
+    <div class="mtour__text"><p>{TOUR_P}</p><a class="btn btn--light" href="{ROUTE}" target="_blank" rel="noopener">Построить маршрут</a></div>
   </div>
 </section>'''
 block('<section class="tour on-dark"', '</section>', TOUR)
@@ -281,7 +275,7 @@ ROWS = ['Профессиональная гигиена и отбеливани
 rows = ''.join(f'\n    <a class="svl-row" href="zapis" data-modal="book" style="--delay:{i * .3:.1f}s"><h3 class="svl-row__title">{t}</h3><span class="svl-row__act"><span class="svl-go" aria-hidden="true">{ARROW}</span></span></a>' for i, t in enumerate(ROWS))
 # ---------- ГЛАВНЫЙ ВРАЧ ----------
 # Идеолог «Академии»: факты из открытых источников и от клиники; цитату согласовать с ним
-CHIEF_FMT = ['Протезирование всей челюсти на имплантах All-on-4 и All-on-6', 'Имплантация и сложное удаление', 'Коронки и виниры из диоксида циркония и керамики', 'Ведёт лечение сам: от плана до готовых зубов']
+CHIEF_FMT = ['Все зубы на имплантах: All-on-4 и All-on-6', 'Имплантация и сложное удаление', 'Коронки и виниры из циркония и керамики', 'Лечение под ключ: от плана до готовых зубов']
 CHIEF_RULES = [('Сначала план', 'Диагностика и снимок до лечения. Пациент заранее знает каждый этап.'),
                ('Под увеличением', 'Микроскоп и бинокуляры на каждом приёме, а не по особому случаю.'),
                ('Сложное решаем сами', 'От одного импланта до протеза всей челюсти, без пересылок по клиникам.')]
@@ -294,7 +288,7 @@ CHIEF = f'''<section class="section au-chief" id="chief" data-v="4" aria-labelle
     <p class="au-chief__role">Стоматолог-ортопед и хирург, выпускник РязГМУ. Идеолог «Академии улыбки».</p>
     <blockquote class="au-chief__quote" data-reveal><p>«Академия для меня не вывеска. Врач учится всю жизнь, а пациент уходит не просто с вылеченным зубом, а с улыбкой, которую не стыдно показать.»</p></blockquote>
     <ol class="au-chief__rules">{''.join(f'<li data-reveal><b>{a}</b><span>{b}</span></li>' for a, b in CHIEF_RULES)}</ol>
-    <div class="au-chief__fmt"><p class="au-incl__t">С чем приходят к Виктору Викторовичу</p><ul>{''.join(f'<li>{x}</li>' for x in CHIEF_FMT)}</ul></div>
+    <div class="au-chief__fmt"><p class="au-incl__t">Специализация</p><ul>{''.join(f'<li>{x}</li>' for x in CHIEF_FMT)}</ul></div>
     <a class="btn btn--lg" href="zapis?doctor=lazarev" data-modal="book" data-doctor="lazarev">Записаться к главному врачу</a>
   </div>
 </div></section>
@@ -339,11 +333,11 @@ AL = [('Консультация', 'Осмотр, план лечения и с�
       ('Рассрочка', 'Лечение можно оплатить частями', 'Частями'), ('Подарочный сертификат', 'Здоровая улыбка в подарок близким', 'Подарок'),
       ('Парковка', 'Своя, есть места для людей с инвалидностью', 'Бесплатно'), ('Без выходных', 'Ежедневно с 9:00 до 21:00', '7/7')]
 alv = ''.join(f'<li data-reveal><span class="alv4__l"><span class="alv__t">{a}</span><span class="alv__d">{b}</span></span><i aria-hidden="true"></i><b class="alv__n">{c}</b></li>' for a, b, c in AL)
-alp = ''.join(f'<li data-reveal><b>{a} <em class="pr-al__n">{c}</em></b><span>{b}</span></li>' for a, b, c in AL)
+alp = ''.join(f'<li data-reveal><em class="pr-al__n">{c}</em><b>{a}</b><span>{b}</span></li>' for a, b, c in AL)
 AKCII = f'''<section class="section pr on-dark" id="akcii" aria-labelledby="pr-title"><div class="wrap">
   <div class="section__head"><div><span class="label label--light">Акции</span><h2 id="pr-title" data-split>Выгодные условия для пациентов</h2></div><p>Назовите акцию, когда администратор перезвонит.</p></div>
   <div class="pr4">{pr}</div>
-  <div class="alx"><div class="alx__desk"><div class="alv4"><h3 class="pr-al__title">Выгодно всегда</h3><ul class="alv4__list">{alv}</ul></div></div><div class="alx__phone"><div class="pr-al"><h3 class="pr-al__title">Выгодно всегда</h3><ul class="pr-al__list">{alp}</ul></div></div></div>
+  <div class="alx"><div class="alx__desk"><div class="alv4"><h3 class="pr-al__title">Выгодно всегда</h3><ul class="alv4__list">{alv}</ul></div></div><div class="alx__phone"><div class="pr-al" id="alw" data-v="1"><h3 class="pr-al__title">Выгодно всегда</h3><ul class="pr-al__list">{alp}</ul></div></div></div>
 </div></section>'''
 block('<section class="section pr on-dark"', '</div></section>', AKCII)
 
@@ -572,11 +566,11 @@ s = s.replace('Вайтис', 'Академия улыбки').replace('White Te
 
 # ---------- демо-переключатель вариантов (убрать после выбора) ----------
 VPANEL = """<div class="au-vp" role="group" aria-label="Варианты оформления (демо)"><b>Варианты</b>
-<span>Врачи</span><span class="au-vp__g" data-t="team"><button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button><button data-v="4">4</button></span></div>
+<span>Буква А</span><span class="au-vp__g" data-t="hx"><button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button></span><span>Выгодно</span><span class="au-vp__g" data-t="alw"><button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button></span></div>
 <script>(function(){var K="au-v-";function set(t,v,go){var el=document.getElementById(t);if(!el)return;el.setAttribute("data-v",v);document.querySelectorAll('.au-vp__g[data-t="'+t+'"] button').forEach(function(b){b.classList.toggle("on",b.getAttribute("data-v")==v)});try{localStorage.setItem(K+t,v)}catch(e){}if(go)el.scrollIntoView({behavior:"smooth"});if(window.ScrollTrigger)ScrollTrigger.refresh()}
 document.querySelectorAll(".au-vp__g").forEach(function(g){var t=g.getAttribute("data-t"),v="1";try{v=localStorage.getItem(K+t)||"1"}catch(e){}set(t,v);g.addEventListener("click",function(e){var b=e.target.closest("button");if(b)set(t,b.getAttribute("data-v"),true)})})})();</script>
 """
-# s = s.replace('</body>', VPANEL + '</body>', 1)  # демо-панель отключена: варианты выбраны
+s = s.replace('</body>', VPANEL + '</body>', 1)  # демо-панель на телефоне: буква А и «Выгодно всегда»
 # свои стили встраиваем в страницу: на один блокирующий запрос меньше
 s = s.replace('<link rel="stylesheet" href="assets/akademiya.css?v=au9">', '<style>' + re.sub(r'/\*.*?\*/', '', open(os.path.join(ROOT, 'assets/akademiya.css'), encoding='utf-8').read().replace('\n', '')) + '</style>')
 s = re.sub(r'href="zapis(\?doctor=\w+)?"', 'href="#contacts"', s)

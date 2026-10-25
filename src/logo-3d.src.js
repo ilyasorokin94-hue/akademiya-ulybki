@@ -60,6 +60,8 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
     group.scale.setScalar(k);
   }
   fit(); addEventListener('resize', fit);
+  // на телефоне размер блока меняется вместе с вариантом оформления
+  if (window.ResizeObserver) new ResizeObserver(fit).observe(box);
 
   var mx = 0, my = 0, tx = 0, ty = 0;
   addEventListener('pointermove', function (e) { mx = (e.clientX / innerWidth) * 2 - 1; my = (e.clientY / innerHeight) * 2 - 1; }, { passive: true });

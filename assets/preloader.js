@@ -52,6 +52,8 @@
   g.set(a, { autoAlpha: 0 });
   g.set([thin, cap, sw], { autoAlpha: 0 });
   g.set('.pl__count', { autoAlpha: 1 });
+  // Илья: заставка была слишком медленной, ускоряем весь таймлайн вдвое
+  tl.timeScale(2);
   window.__plTl = tl;
   var dbg = /plpause/.test(location.search); if (dbg) tl.pause();
 
@@ -78,5 +80,5 @@
     .add(function () { pl.remove(); });
 
   // если вкладка открыта в фоне, не держим страницу
-  if (!dbg) setTimeout(function () { release(); if (pl.isConnected) pl.remove(); }, 5000);
+  if (!dbg) setTimeout(function () { release(); if (pl.isConnected) pl.remove(); }, 3000);
 })();
